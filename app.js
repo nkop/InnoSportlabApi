@@ -7,9 +7,26 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var flash = require('connect-flash');
 var session = require('express-session');
+require('dotenv').config();
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://admin:admin@innosportlab-shard-00-00-0tqf6.mongodb.net:27017,innosportlab-shard-00-01-0tqf6.mongodb.net:27017,innosportlab-shard-00-02-0tqf6.mongodb.net:27017/InnoSportlab?ssl=true&replicaSet=InnoSportlab-shard-0&authSource=admin');
+
+let configDB = require('./config/database.js');
+
+var connectionURL;
+switch (process.env.APP_ENV) {
+    case "production":
+        connectionURL = configDB.remote;
+        break;
+    case "test":
+        connectionURL = configDB.test;
+        break;
+    default:
+        connectionURL = configDB.local;
+}
+console.log("Database: " + connectionURL);
+
+mongoose.connect(connectionURL);
 mongoose.Promise = require('q').Promise;
 
 
