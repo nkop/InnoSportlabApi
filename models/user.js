@@ -3,8 +3,11 @@
  */
 var mongoose = require('mongoose');
 //var Video = mongoose.model('Video');
+
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var bcrypt = require('bcrypt-nodejs');
+
+var uniqueValidator = require('mongoose-unique-validator');
 
 var userSchema = new mongoose.Schema({
     firstName: {type: String, required: false},
@@ -18,6 +21,8 @@ var userSchema = new mongoose.Schema({
     created_at: {type: Date, required: false, default: Date.now},
     updated_at: {type: Date, required: false, default: Date.now}
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.methods.generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);

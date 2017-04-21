@@ -75,6 +75,22 @@ function deleteUser(req, res) {
     });
 }
 
+function updateUser(req, res) {
+    User.findById(req.params.id, function (err, user) {
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+        user.userName = req.body.userName;
+        user.email = req.body.email;
+        user.city = req.body.city;
+        user.rfid = req.body.rfid;
+        user
+            .save()
+            .then(user => {
+                res.status(200).json(user)
+            }).catch(err => handleError(req, res, 500, err));
+    });
+}
+
 /* GET users listing. */
 router.route('/')
     .get(getUsers)
@@ -82,6 +98,7 @@ router.route('/')
 
 router.route('/:id')
     .get(getUsers)
+    .put(updateUser)
     .delete(deleteUser);
 
 router.route('/:id/rfid')
