@@ -48,11 +48,20 @@ router.route('/signup')
 
 router.route('/login')
     .get(renderLogin)
-    .post(passport.authenticate('local-login', {
-        successRedirect: '/profile',
-        failureRedirect: '/auth/login',
-        failureFlash: true
-    }));
+    // .post(passport.authenticate('local-login', {
+    //     successRedirect: '/profile',
+    //     failureRedirect: '/auth/login',
+    //     failureFlash: true
+    // }));
+    .post(function (req, res, next) {
+        passport.authenticate('local-login', function (err, user, info) {
+            if (user) {
+                res.json(user);
+            } else {
+                res.json({"message": "failure"});
+            }
+        })(req, res, next);
+    });
 
 router.route('/logout')
     .get(logout);
