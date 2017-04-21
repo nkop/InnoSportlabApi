@@ -25,9 +25,6 @@ function getUsers(req, res) {
 
 function addUser(req, res) {
     var user = new User(req.body);
-    // todo hash password
-    user.created_at = Date.now();
-    user.updated_at = Date.now();
     user
         .save()
         .then(user => {
@@ -77,7 +74,7 @@ function deleteUser(req, res) {
 
 function updateUser(req, res) {
     User.findById(req.params.id, function (err, user) {
-        user.userName = req.body.userName;
+        // user.userName = req.body.userName; // todo check if alrady exists
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.email = req.body.email;

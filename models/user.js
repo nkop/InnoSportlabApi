@@ -10,10 +10,10 @@ var bcrypt = require('bcrypt-nodejs');
 var uniqueValidator = require('mongoose-unique-validator');
 
 var userSchema = new mongoose.Schema({
+    email: {type: String, required: true, unique: true},
     userName: {type: String, required: true, unique: true},
     firstName: {type: String, required: false},
     lastName: {type: String, required: false},
-    email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     dateOfBirth: {type: Date, required: false},
     city: {type: String, required: false},
@@ -32,5 +32,11 @@ userSchema.methods.generateHash = function (password) {
 userSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
+
+userSchema.pre('save', function (next) {
+    var user = this;
+    user.updated_at = Date.now();
+    next();
+});
 
 module.exports = mongoose.model('User', userSchema);
