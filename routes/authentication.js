@@ -63,6 +63,7 @@ router.route('/login')
         })(req, res, next);
     });
 
+
 router.route('/logout')
     .get(logout);
 
