@@ -77,9 +77,9 @@ function deleteUser(req, res) {
 
 function updateUser(req, res) {
     User.findById(req.params.id, function (err, user) {
+        user.userName = req.body.userName;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
-        user.userName = req.body.userName;
         user.email = req.body.email;
         user.city = req.body.city;
         user.rfid = req.body.rfid;
