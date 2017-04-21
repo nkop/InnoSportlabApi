@@ -14,18 +14,18 @@ var mongoose = require('mongoose');
 let configDB = require('./config/database.js');
 
 var connectionURL;
-console.log("Database: " + connectionURL);
+
 switch (process.env.APP_ENV) {
     case "local":
         connectionURL = configDB.local;
         break;
-        connectionURL = configDB.remote;
     case "test":
         connectionURL = configDB.test;
         break;
     default:
         connectionURL = configDB.remote;
 }
+console.log("Database: " + connectionURL);
 
 mongoose.connect(connectionURL);
 mongoose.Promise = require('q').Promise;
