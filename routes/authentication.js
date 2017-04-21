@@ -54,6 +54,7 @@ router.route('/login')
         failureFlash: true
     }));
 
+
 router.route('/logout')
     .get(logout);
 
