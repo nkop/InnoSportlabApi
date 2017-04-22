@@ -25,6 +25,7 @@ function getUsers(req, res) {
 
 function addUser(req, res) {
     var user = new User(req.body);
+    user.password = user.generateHash(req.body.password);
     user
         .save()
         .then(user => {
@@ -88,6 +89,29 @@ function updateUser(req, res) {
     });
 }
 
+/**
+ * Check if user/email exists and if password matches
+ * @param req
+ * @param res
+ */
+function validateUser(req, res) {
+    User.findOne({'email': req.body.email}, function (err, user) {
+        console.log(user);
+        if (err)
+            console.log("error");
+
+        if (!user || !user.validPassword(req.body.password)) {
+            res
+                .status(500)
+                .json({
+                    "message": "Invalid email or password"
+                });
+        } else {
+            return res.status(200).json(user);
+        }
+    });
+}
+
 /* GET users listing. */
 router.route('/')
     .get(getUsers)
@@ -103,6 +127,10 @@ router.route('/:id/rfid')
 
 router.route('/:id/video')
     .patch(patchVideo);
+
+router.route('/validate')
+    .post(validateUser);
+;
 
 
 module.exports = function (errCallback) {
