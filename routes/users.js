@@ -113,7 +113,7 @@ function validateLogin(req, res) {
 }
 
 function validateSignUp(req, res) {
-
+  if (req.body.password === req.body.confirmpassword) {
     User.findOne({'userName': req.body.userName}, function (err, user) { // deze user moet niet null zijn nu
         console.log(user);
         if (err)
@@ -133,6 +133,10 @@ function validateSignUp(req, res) {
         }
 
     });
+  }
+  else {
+    res.status(500).json({"message" : "Passwords does not match"});
+  }
 }
 
 /* GET users listing. */
