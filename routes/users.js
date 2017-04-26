@@ -94,7 +94,7 @@ function updateUser(req, res) {
  * @param req
  * @param res
  */
-function validateUser(req, res) {
+function validateLogin(req, res) {
     User.findOne({'email': req.body.email}, function (err, user) {
         console.log(user);
         if (err)
@@ -109,6 +109,29 @@ function validateUser(req, res) {
         } else {
             return res.status(200).json(user);
         }
+    });
+}
+
+function validateSignUp(req, res) {
+
+    User.findOne({'userName': req.body.userName}, function (err, user) { // deze user moet niet null zijn nu
+        console.log(user);
+        if (err)
+            console.log("error");
+
+        if(user === null){
+          User.findOne({'email': req.body.email}, function (err, user) {
+            if(user === null){
+              addUser(req,res);
+            } else {
+                res.status(500).json({"message" : "Email already exists"});
+            }
+          });
+
+        } else {
+          res.status(500).json({"message" : "Username already exists"});
+        }
+
     });
 }
 
@@ -129,8 +152,10 @@ router.route('/:id/video')
     .patch(patchVideo);
 
 router.route('/validate')
-    .post(validateUser);
-;
+    .post(validateLogin);
+
+router.route('/validatesignup')
+    .post(validateSignUp);
 
 
 module.exports = function (errCallback) {
