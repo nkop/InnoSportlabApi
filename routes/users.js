@@ -113,7 +113,10 @@ function validateLogin(req, res) {
 }
 
 function validateSignUp(req, res) {
-  if (req.body.password === req.body.confirmpassword) {
+
+  var countPasswordChar = Object.keys(req.body.password).length;
+
+  if (req.body.password === req.body.confirmpassword && countPasswordChar > 5) {
     User.findOne({'userName': req.body.userName}, function (err, user) { // deze user moet niet null zijn nu
         console.log(user);
         if (err)
@@ -133,6 +136,9 @@ function validateSignUp(req, res) {
         }
 
     });
+  }
+  else if (countPasswordChar < 6){
+    res.status(500).json({"message" : "Passwords characters must be at least contain 6 characters"});
   }
   else {
     res.status(500).json({"message" : "Passwords does not match"});

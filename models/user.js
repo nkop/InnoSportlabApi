@@ -18,6 +18,7 @@ var userSchema = new mongoose.Schema({
     dateOfBirth: {type: Date, required: false},
     city: {type: String, required: false},
     rfid: {type: String, required: false},
+    coach: {type: Boolean, default: false},
     //videos: [{ type: ObjectId, ref: 'Video', required: false }],
     created_at: {type: Date, required: false, default: Date.now},
     updated_at: {type: Date, required: false, default: Date.now}
