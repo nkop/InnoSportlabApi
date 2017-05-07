@@ -34,6 +34,14 @@ function getCoaches(req, res){
     );}
 }
 
+function findCoach(req,res) {
+
+    User.find({'userName' : new RegExp(req.params.username, 'i')}, function(err, docs){
+        res.status(200).json(docs);
+    });
+
+}
+
 /*function addCoach(req, res){
     console.log("adding coach");
     var coach = new Coach(req.body);
@@ -82,6 +90,9 @@ function deleteCoach(req, res){
 /* GET coachs listing. */
 router.route('/')
     .get(getCoaches);
+
+router.route('/find/:username')
+    .get(findCoach);
 
 router.route('/:id')
     .get(getCoaches)

@@ -139,6 +139,11 @@ function validateSignUp(req, res) {
   }
 }
 
+function getCoaches(req,res) {
+    console.log("insinde");
+    res.status(200).json({"test" : "test"});
+}
+
 /* GET users listing. */
 router.route('/')
     .get(getUsers)
@@ -162,8 +167,10 @@ router.route('/validatesignup')
     .post(validateSignUp);
 
 
+
+
 module.exports = function (errCallback) {
     console.log('Initializing users routing module');
     handleError = errCallback;
     return router;
-}
+};
