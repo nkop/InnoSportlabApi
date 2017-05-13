@@ -18,8 +18,8 @@ function getVideos(req, res){
     var query = {};
     if (req.params.id) {
         query.userName = req.params.id;
-        Coach.find(query)
-            .populate('sporters')
+        Video.find(query)
+            .populate('videos')
             .then(data => {
             console.log(data);
         if(req.params.id){
@@ -28,7 +28,7 @@ function getVideos(req, res){
         res.json(data);
     }).fail(err => handleError(req, res, 500, err));
     } else {
-        Coach.find(query)
+        Video.find(query)
             .then(data => {
             console.log(data);
         if (req.params.id) {
@@ -97,6 +97,17 @@ function patchSporter(req, res){
     });
 }
 
+function addSingleVideo(req, res) {
+    var video = new Video();
+    video.filePath = req.body.filePath;
+    video
+        .save()
+        .then(video => {
+            res.status(201).json(video);
+        })
+        .fail(err => handleError(req, res, 500, err));
+}
+
 function deleteVideo(req, res){
     Coach.remove({
         userName: req.params.id
@@ -109,7 +120,7 @@ function deleteVideo(req, res){
 /* GET coachs listing. */
 router.route('/')
     .get(getVideos)
-    .post(addVideo);
+    .post(addSingleVideo);
 
 router.route('/:id')
     .get(getVideos)
