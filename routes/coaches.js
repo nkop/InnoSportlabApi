@@ -7,6 +7,58 @@ var async = require('async');
 var mongoose = require('mongoose');
 Coach = mongoose.model('Coach');
 User = mongoose.model('User');
+Invite = mongoose.model('Invites');
+
+
+// add's an invite to a coach
+function inviteCoach(req, res, next) {
+
+    // check if user don't try to send himself an invite
+    if (req.body.invited === req.body.invitor) {
+        res.status(500).json({"error": "Can't invite yourself.."});
+        return;
+    }
+
+    // find the coach (he is invited)
+    User.findOne({email: req.body.invited}, function (err, invited) {
+        if (!invited) {
+            res.status(500).json({"error": "Email can't be found"});
+            return
+        }
+
+        // find the user (he is the invitor)
+        User.findOne({email: req.body.invitor}, function (err, invitor) {
+            if (!invitor) {
+                res.status(500).json({"error": "Email can't be found"});
+                return
+            }
+
+            let invite = new Invite();// create a new invite
+            invite.invitor = invitor; // set invitor (the user)
+            invite.save().catch(err => handleError(req, res, 500, err));  // save the invite
+
+            // add the invite to the coaches invites
+            invited.invites.push(invite);
+
+            // and save..
+            invited.save().then(user => {
+                res.status(201).json(user.invites)
+            }).catch(err => handleError(req, res, 500, err));
+        });
+    });
+}
+
+function addUser(req, res) {
+    var user = new User(req.body);
+    user.password = user.generateHash(req.body.password);
+    user
+        .save()
+        .then(user => {
+            res.status(201).json(user);
+        })
+        .fail(err => handleError(req, res, 500, err));
+}
+
 
 function getCoaches(req, res) {
     var query = {};
@@ -79,7 +131,7 @@ function patchSporter(req, res) {
         if (err) {
             handleError(req, res, 500, err);
         }
-        if (coach.sporters == null) {
+        if (coach.sporters === null) {
             var array = [sporter._id];
             coach.sporters = array;
         } else {
@@ -92,7 +144,7 @@ function patchSporter(req, res) {
                 handleError(req, res, 500, err);
             }
             res.json(coach);
-        })
+        });
     });
 }
 
@@ -106,6 +158,9 @@ function deleteCoach(req, res) {
         res.json({message: "Coach successfully deleted"});
     });
 }
+
+router.route('/invite')
+    .post(inviteCoach);
 
 /* GET coachs listing. */
 router.route('/')
@@ -125,4 +180,4 @@ module.exports = function (errCallback) {
     console.log('Initializing coaches routing module');
     handleError = errCallback;
     return router;
-}
+};
