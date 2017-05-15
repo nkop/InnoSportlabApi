@@ -48,6 +48,15 @@ function inviteCoach(req, res, next) {
     });
 }
 
+function getInvites(req,res) {
+    User.findById(req.params.id)
+        .populate("invites")
+        .then(data => {
+            res.json(data.invites)
+        })
+        .catch(err => handleError(req, res, 500, err));
+}
+
 function addUser(req, res) {
     var user = new User(req.body);
     user.password = user.generateHash(req.body.password);
@@ -161,6 +170,9 @@ function deleteCoach(req, res) {
 
 router.route('/invite')
     .post(inviteCoach);
+
+router.route('/invite/:id')
+    .get(getInvites);
 
 /* GET coachs listing. */
 router.route('/')
