@@ -100,6 +100,17 @@ function validateLogin(req, res) {
     });
 }
 
+function addUser(req, res) {
+    var user = new User(req.body);
+    user.password = user.generateHash(req.body.password);
+    user
+        .save()
+        .then(user => {
+            res.status(201).json(user);
+        })
+        .fail(err => handleError(req, res, 500, err));
+}
+
 function validateSignUp(req, res) {
 
   var countPasswordChar = Object.keys(req.body.password).length;
