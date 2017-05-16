@@ -1,8 +1,9 @@
 /**
  * Created by Niels on 2-3-2017.
  */
- var mongoose = require('mongoose');
-//var Video = mongoose.model('Video');
+
+var mongoose = require('mongoose');
+
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var bcrypt = require('bcrypt-nodejs');
@@ -19,7 +20,8 @@ var userSchema = new mongoose.Schema({
     city: {type: String, required: false},
     rfid: {type: String, required: false},
     coach: {type: Boolean, default: false},
-    invites: [{ type: ObjectId, ref: 'Invites', required: false }],
+    messages: [{ type: ObjectId, ref: 'Message', required: false }],
+    sporters: [{ type: ObjectId, ref: 'User'}],
     //videos: [{ type: ObjectId, ref: 'Video', required: false }],
     created_at: {type: Date, required: false, default: Date.now},
     updated_at: {type: Date, required: false, default: Date.now}

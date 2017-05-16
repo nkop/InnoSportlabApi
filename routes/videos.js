@@ -6,8 +6,6 @@ var express = require('express');
 var router = express();
 var _ = require('underscore');
 var handleError;
-var async = require('async');
-
 
 var mongoose = require('mongoose');
 Video = mongoose.model('Video');
@@ -43,8 +41,8 @@ function getVideos(req, res){
 function addVideo(req, res){
     var fail = null;
     for (var reqVideo in req.body.video){
-        var video = new Video();
         video.filePath = reqVideo.filePath;
+        var video = new Video();
         if (reqVideo.tags != null) video.tags = reqVideo.tags;
         video.save()
             .fail(fail = err);
@@ -73,7 +71,7 @@ function userPatchVideo(userName, video){
     });
 }
 
-function patchSporter(req, res){
+/*function patchSporter(req, res){
     var sporter;
     User.findOne({ 'userName' : req.body.sporter }, 'userName', function (err, user) {
         sporter = new User(user);
@@ -95,7 +93,7 @@ function patchSporter(req, res){
             res.json(coach);
         })
     });
-}
+}*/
 
 function addSingleVideo(req, res) {
     var video = new Video();
@@ -117,7 +115,7 @@ function deleteVideo(req, res){
     });
 }
 
-/* GET coachs listing. */
+/* GET videos listing. */
 router.route('/')
     .get(getVideos)
     .post(addSingleVideo);
@@ -126,11 +124,11 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
-router.route('/:id/sporter')
-    .patch(patchSporter);
+/*router.route('/:id/sporter')
+    .patch(patchSporter);*/
 
 module.exports = function (errCallback){
-    console.log('Initializing coaches routing module');
+    console.log('Initializing video routing module');
     handleError = errCallback;
     return router;
 }
