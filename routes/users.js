@@ -4,7 +4,6 @@ var _ = require('underscore');
 var handleError;
 var async = require('async');
 
-
 var mongoose = require('mongoose');
 User = mongoose.model('User');
 
@@ -21,17 +20,6 @@ function getUsers(req, res) {
         }
         res.json(data);
     }).fail(err => handleError(req, res, 500, err));
-}
-
-function addUser(req, res) {
-    var user = new User(req.body);
-    user.password = user.generateHash(req.body.password);
-    user
-        .save()
-        .then(user => {
-            res.status(201).json(user);
-        })
-        .fail(err => handleError(req, res, 500, err));
 }
 
 function patchRFID(req, res) {
@@ -75,7 +63,7 @@ function deleteUser(req, res) {
 
 function updateUser(req, res) {
     User.findById(req.params.id, function (err, user) {
-        // user.userName = req.body.userName; // todo check if alrady exists
+        // user.userName = req.body.userName; // todo check if already exists
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.email = req.body.email;
@@ -145,16 +133,10 @@ function validateSignUp(req, res) {
   }
 }
 
-function getCoaches(req,res) {
-    console.log("insinde");
-    res.status(200).json({"test" : "test"});
-}
 
 /* GET users listing. */
 router.route('/')
-    .get(getUsers)
-    .post(addUser);
-
+    .get(getUsers);
 router.route('/:id')
     .get(getUsers)
     .put(updateUser)
