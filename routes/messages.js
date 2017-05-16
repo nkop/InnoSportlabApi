@@ -33,6 +33,7 @@ function inviteCoach(req, res, next) {
 
             let message = new Message();// create a new invite
             message.invitor = invitor; // set invitor (the user)
+            message.message = "You have received an invitation.";
             message.save().catch(err => handleError(req, res, 500, err));  // save the invite
 
             // add the invite to the coaches invites
