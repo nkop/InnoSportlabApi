@@ -31,18 +31,6 @@ mongoose.connect(connectionURL);
 mongoose.Promise = require('q').Promise;
 
 
-//models
-require('./models/tag');
-require('./models/user');
-require('./models/video');
-//require('./models/coach');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-//var coaches = require('./routes/coaches');
-var tags = require('./routes/tags');
-var videos = require('./routes/videos');
-
 function handleError(req, res, statusCode, message) {
     console.log();
     console.log('-------- Error handled --------');
@@ -52,7 +40,7 @@ function handleError(req, res, statusCode, message) {
     console.log('-------- /Error handled --------');
     res.status(statusCode);
     res.json(message);
-};
+}
 
 var app = express();
 
@@ -77,7 +65,7 @@ app.use(function (req, res, next) {
     }
 });
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
@@ -93,11 +81,29 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+//models
+require('./models/tag');
+require('./models/user');
+require('./models/video');
+require('./models/message');
+// require('./models/coach'); // todo: can be deleted inc. files ??
+
+// routes
+let index = require('./routes/index');
+let users = require('./routes/users');
+let messages = require('./routes/messages');
+let tags = require('./routes/tags');
+let videos = require('./routes/videos');
+// var coaches = require('./routes/coaches'); // todo: can be deleted inc. files ??
+
+
 app.use('/', index);
 app.use('/users', users(handleError));
-//app.use('/coaches', coaches(handleError));
 app.use('/tags', tags(handleError));
 app.use('/videos', videos(handleError));
+app.use('/messages', messages(handleError));
+// app.use('/coaches', coaches(handleError)); // todo: can be deleted inc. files ??
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
