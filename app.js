@@ -32,7 +32,6 @@ mongoose.Promise = require('q').Promise;
 
 
 //models
-//require('./config/passport')(passport);
 require('./models/user');
 require('./models/coach');
 require('./models/tag');
@@ -43,7 +42,6 @@ var users = require('./routes/users');
 var coaches = require('./routes/coaches');
 var tags = require('./routes/tags');
 var videos = require('./routes/videos');
-//var auth = require('./routes/authentication');
 
 function handleError(req, res, statusCode, message){
     console.log();
@@ -100,7 +98,6 @@ app.use('/users', users(handleError));
 app.use('/coaches', coaches(handleError));
 app.use('/tags', tags(handleError));
 app.use('/videos', videos(handleError));
-//app.use('/auth', auth(handleError, passport));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

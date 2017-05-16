@@ -6,8 +6,6 @@ var express = require('express');
 var router = express();
 var _ = require('underscore');
 var handleError;
-var async = require('async');
-
 
 var mongoose = require('mongoose');
 Video = mongoose.model('Video');
@@ -43,8 +41,8 @@ function getVideos(req, res){
 function addVideo(req, res){
     var fail = null;
     for (var reqVideo in req.body.video){
-        var video = new Video();
         video.filePath = reqVideo.filePath;
+        var video = new Video();
         if (reqVideo.tags != null) video.tags = reqVideo.tags;
         video.save()
             .fail(fail = err);
