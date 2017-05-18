@@ -13,29 +13,41 @@ Tag = mongoose.model('Tag');
 User = mongoose.model('User');
 
 function getVideos(req, res){
+    // var query = {};
+    // if (req.params.id) {
+    //     query.userName = req.params.id;
+    //     Video.find(query)
+    //         .populate('videos')
+    //         .then(data => {
+    //         console.log(data);
+    //     if(req.params.id){
+    //         data = data[0];
+    //     }
+    //     res.json(data);
+    // }).fail(err => handleError(req, res, 500, err));
+    // } else {
+    //     Video.find(query)
+    //         .then(data => {
+    //         console.log(data);
+    //     if (req.params.id) {
+    //         data = data[0];
+    //     }
+    //     res.json(data);
+    // }).
+    //     fail(err => handleError(req, res, 500, err)
+    // );}
     var query = {};
     if (req.params.id) {
         query.userName = req.params.id;
-        Video.find(query)
-            .populate('videos')
-            .then(data => {
-            console.log(data);
-        if(req.params.id){
-            data = data[0];
-        }
-        res.json(data);
-    }).fail(err => handleError(req, res, 500, err));
-    } else {
-        Video.find(query)
-            .then(data => {
-            console.log(data);
+    }
+
+    Video.find(query).then(data => {
+        console.log(data);
         if (req.params.id) {
             data = data[0];
         }
         res.json(data);
-    }).
-        fail(err => handleError(req, res, 500, err)
-    );}
+    }).fail(err => handleError(req, res, 500, err));
 }
 
 function addVideo(req, res){
@@ -96,22 +108,26 @@ function userPatchVideo(userName, video){
 }*/
 
 function addSingleVideo(req, res) {
-    var video = new Video();
-    video.filePath = req.body.filePath;
-    video
-        .save()
-        .then(video => {
-            res.status(201).json(video);
-        })
-        .fail(err => handleError(req, res, 500, err));
+    User.findOne({ 'userName' : req.body.sporter }, function (err, user) {
+        console.log(user);
+        var video = new Video();
+        video.filePath = req.body.filePath;
+        video.sporter = user;
+        video
+            .save()
+            .then(video => {
+                res.status(201).json(video);
+            })
+            .fail(err => handleError(req, res, 500, err));  
+    });   
 }
 
 function deleteVideo(req, res){
-    Coach.remove({
-        userName: req.params.id
+    Video.remove({
+        _id: req.params.id
     }, function(err, user){
         if (err) {handleError(req, res, 500, err); }
-        res.json({ message: "Coach successfully deleted" });
+        res.json({ message: "Video successfully deleted" });
     });
 }
 
