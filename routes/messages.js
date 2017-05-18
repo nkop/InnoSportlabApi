@@ -34,6 +34,7 @@ function inviteCoach(req, res, next) {
             let message = new Message();// create a new invite
             message.invitor = invitor; // set invitor (the user)
             message.message = "You have received an invitation.";
+            message.type = req.body.type;
             message.save().catch(err => handleError(req, res, 500, err));  // save the invite
 
             // add the invite to the coaches invites
@@ -56,11 +57,22 @@ function getMessages(req, res) {
         .catch(err => handleError(req, res, 500, err));
 }
 
+function getSingleMessage(req, res) {
+    Message.findById(req.params.id)
+        .populate("invitor")
+        .then(data => {
+            res.json(data);
+        }).catch(err => handleError(req, res, 500, err));
+}
+
 router.route('/invite')
     .post(inviteCoach);
 
 router.route('/:id')
     .get(getMessages);
+
+router.route('/:id/single')
+    .get(getSingleMessage);
 
 module.exports = function (errCallback) {
     console.log('Initializing coaches routing module');
