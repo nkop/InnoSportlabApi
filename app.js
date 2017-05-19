@@ -4,9 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var passport = require('passport');
-var flash = require('connect-flash');
-var session = require('express-session');
 require('dotenv').config();
 
 var mongoose = require('mongoose');
@@ -71,22 +68,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-    secret: 'groepaisdeallerbeste',
-    resave: false,
-    saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-
 //models
 require('./models/tag');
 require('./models/user');
 require('./models/video');
 require('./models/message');
-// require('./models/coach'); // todo: can be deleted inc. files ??
 
 // routes
 let index = require('./routes/index');
@@ -94,7 +80,6 @@ let users = require('./routes/users');
 let messages = require('./routes/messages');
 let tags = require('./routes/tags');
 let videos = require('./routes/videos');
-// var coaches = require('./routes/coaches'); // todo: can be deleted inc. files ??
 
 
 app.use('/', index);
@@ -102,7 +87,6 @@ app.use('/users', users(handleError));
 app.use('/tags', tags(handleError));
 app.use('/videos', videos(handleError));
 app.use('/messages', messages(handleError));
-// app.use('/coaches', coaches(handleError)); // todo: can be deleted inc. files ??
 
 
 // catch 404 and forward to error handler
