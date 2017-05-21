@@ -159,18 +159,18 @@ function getVideos(req, res)
 /* GET users listing. */
 router.route('/')
     .get(getUsers);
-router.route('/:id')
+router.route('/:userName')
     .get(getUsers)
     .put(updateUser)
     .delete(deleteUser);
 
-router.route('/:id/rfid')
+router.route('/:userName/rfid')
     .patch(patchRFID);
 
-router.route('/:id/video')
+router.route('/:userName/video')
     .patch(patchVideo);
 
-router.route('/:id/videos')
+router.route('/:userName/videos')
     .get(getVideos);  
 
 router.route('/validate')
