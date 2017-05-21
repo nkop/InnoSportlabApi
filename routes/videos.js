@@ -13,29 +13,6 @@ Tag = mongoose.model('Tag');
 User = mongoose.model('User');
 
 function getVideos(req, res){
-    // var query = {};
-    // if (req.params.id) {
-    //     query.userName = req.params.id;
-    //     Video.find(query)
-    //         .populate('videos')
-    //         .then(data => {
-    //         console.log(data);
-    //     if(req.params.id){
-    //         data = data[0];
-    //     }
-    //     res.json(data);
-    // }).fail(err => handleError(req, res, 500, err));
-    // } else {
-    //     Video.find(query)
-    //         .then(data => {
-    //         console.log(data);
-    //     if (req.params.id) {
-    //         data = data[0];
-    //     }
-    //     res.json(data);
-    // }).
-    //     fail(err => handleError(req, res, 500, err)
-    // );}
     var query = {};
     if (req.params.id) {
         query.userName = req.params.id;

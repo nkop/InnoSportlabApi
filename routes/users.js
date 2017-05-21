@@ -6,6 +6,7 @@ var async = require('async');
 
 var mongoose = require('mongoose');
 User = mongoose.model('User');
+Video = mongoose.model('Video');
 
 function getUsers(req, res) {
     var query = {};
@@ -142,6 +143,18 @@ function validateSignUp(req, res) {
   }
 }
 
+function getVideos(req, res)
+{
+    var query = {};
+    if (req.params.id) {
+        query.sporter = req.params.id;
+    }
+
+    Video.find(query).then(data => {
+        res.json(data);
+    }).fail(err => handleError(req, res, 500, err));
+}
+
 
 /* GET users listing. */
 router.route('/')
@@ -156,6 +169,9 @@ router.route('/:id/rfid')
 
 router.route('/:id/video')
     .patch(patchVideo);
+
+router.route('/:id/videos')
+    .get(getVideos);  
 
 router.route('/validate')
     .post(validateLogin);
