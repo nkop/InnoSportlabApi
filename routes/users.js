@@ -10,13 +10,13 @@ Video = mongoose.model('Video');
 
 function getUsers(req, res) {
     var query = {};
-    if (req.params.id) {
-        query.userName = req.params.id;
+    if (req.params.userName) {
+        query.userName = req.params.userName;
     }
 
     User.find(query).then(data => {
         console.log(data);
-        if (req.params.id) {
+        if (req.params.userName) {
             data = data[0];
         }
         res.json(data);
@@ -24,7 +24,7 @@ function getUsers(req, res) {
 }
 
 function patchRFID(req, res) {
-    User.findOne({'userName': req.params.id}, 'userName', function (err, user) {
+    User.findOne({'userName': req.params.userName}, 'userName', function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
         }
@@ -42,18 +42,16 @@ function patchRFID(req, res) {
 }
 
 function patchVideo(req, res) {
-    User.findOne({'userName': req.params.id}, 'username', function (err, user) {
+    User.findOne({'userName': req.params.userName}, 'username', function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
         }
-
-
     })
 }
 
 function deleteUser(req, res) {
     User.remove({
-        userName: req.params.id
+        userName: req.params.userName
     }, function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
@@ -63,7 +61,7 @@ function deleteUser(req, res) {
 }
 
 function updateUser(req, res) {
-    User.findById(req.params.id, function (err, user) {
+    User.findById(req.params.userName, function (err, user) {
         // user.userName = req.body.userName; // todo check if already exists
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
