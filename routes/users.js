@@ -170,7 +170,7 @@ router.route('/:userName/rfid')
 router.route('/:userName/video')
     .patch(patchVideo);
 
-router.route('/:userName/videos')
+router.route('/:id/videos')
     .get(getVideos);  
 
 router.route('/validate')
