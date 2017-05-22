@@ -79,9 +79,18 @@ function acceptInvite(req, res, next) {
             user.sporters.push(sporterId);
             user.save().catch(error => handleError(req,res,500,err));
 
+            message.read = true;
             message.accepted = true;
             message.save().catch(error => handleError(req,res,500,err));
         });
+    });
+}
+
+function declineInvite(req, res, next) {
+    Message.findOne({_id: req.body.id}, function (err, message) {
+        message.read = true;
+        message.accepted = false;
+        message.save().catch(error => handleError(req,res,500,err));
     });
 }
 
@@ -96,6 +105,9 @@ router.route('/:id/single')
 
 router.route('/:id/accept')
     .post(acceptInvite);
+
+router.route('/:id/decline')
+    .post(declineInvite);
 
 module.exports = function (errCallback) {
     console.log('Initializing coaches routing module');
