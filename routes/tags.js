@@ -47,7 +47,8 @@ function deleteTag(req, res){
     }, function(err, tagje){
         if (err) {handleError(req, res, 500, err); }
         res.json({ message: "Tag successfully deleted" });
-    });
+    });rs
+
 }
 
 /* GET coachs listing. */

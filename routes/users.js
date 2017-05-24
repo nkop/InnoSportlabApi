@@ -16,7 +16,8 @@ function getUsers(req, res) {
 
     User.find(query).then(data => {
         console.log(data);
-        if (req.params.userName) {
+        // if (req.params.userName) {
+        if (req.params.id) {
             data = data[0];
         }
         res.json(data);
@@ -83,7 +84,6 @@ function updateUser(req, res) {
  */
 function validateLogin(req, res) {
     User.findOne({'email': req.body.email}, function (err, user) {
-        console.log(user);
         if (err)
             console.log("error");
 

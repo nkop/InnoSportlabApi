@@ -8,6 +8,23 @@ var mongoose = require('mongoose');
 User = mongoose.model('User');
 Message = mongoose.model('Message');
 
+function getMessages(req, res) {
+    User.findById(req.params.id)
+        .populate("messages")
+        .then(data => {
+        res.json(data.messages)
+})
+.catch(err => handleError(req, res, 500, err));
+}
+
+function getSingleMessage(req, res) {
+    Message.findById(req.params.id)
+        .populate("invitor")
+        .then(data => {
+        res.json(data);
+}).catch(err => handleError(req, res, 500, err));
+}
+
 // add's an invite to a coach
 function inviteCoach(req, res, next) {
 
@@ -33,8 +50,9 @@ function inviteCoach(req, res, next) {
 
             let message = new Message();// create a new invite
             message.invitor = invitor; // set invitor (the user)
+            message.message = "You have received an invitation.";
+            message.type = req.body.type;
             message.save().catch(err => handleError(req, res, 500, err));  // save the invite
-
             // add the invite to the coaches invites
             invited.messages.push(message);
 
@@ -46,13 +64,34 @@ function inviteCoach(req, res, next) {
     });
 }
 
-function getMessages(req, res) {
-    User.findById(req.params.id)
-        .populate("messages")
-        .then(data => {
-            res.json(data.messages)
-        })
-        .catch(err => handleError(req, res, 500, err));
+function acceptInvite(req, res, next) {
+
+    Message.findOne({_id: req.body.id}, function (err, message) {
+
+        User.findOne({_id: req.body.userId}, function (err, user) {
+            if (!user) {
+                res.status(500).json({"error": "User can't be found"});
+                return
+            }
+
+            let sporterId = message.invitor;
+
+            user.sporters.push(sporterId);
+            user.save().catch(error => handleError(req,res,500,err));
+
+            message.read = true;
+            message.accepted = true;
+            message.save().catch(error => handleError(req,res,500,err));
+        });
+    });
+}
+
+function declineInvite(req, res, next) {
+    Message.findOne({_id: req.body.id}, function (err, message) {
+        message.read = true;
+        message.accepted = false;
+        message.save().catch(error => handleError(req,res,500,err));
+    });
 }
 
 router.route('/invite')
@@ -60,6 +99,15 @@ router.route('/invite')
 
 router.route('/:id')
     .get(getMessages);
+
+router.route('/:id/single')
+    .get(getSingleMessage);
+
+router.route('/:id/accept')
+    .post(acceptInvite);
+
+router.route('/:id/decline')
+    .post(declineInvite);
 
 module.exports = function (errCallback) {
     console.log('Initializing coaches routing module');
