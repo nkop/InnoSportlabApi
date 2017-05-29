@@ -187,6 +187,7 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
+router.route('/:filename')
     .get(getVideo)
 
 router.route('/:id/upload')
