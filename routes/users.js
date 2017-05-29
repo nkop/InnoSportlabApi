@@ -13,7 +13,7 @@ function getUsers(req, res) {
         query._id = req.params.id;
     }
 
-    User.find(query).then(data => {
+    User.find(query).populate("sporters").then(data => {
         if (req.params.id) {
             data = data[0];
         }
