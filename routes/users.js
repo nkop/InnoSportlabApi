@@ -8,9 +8,10 @@ var mongoose = require('mongoose');
 User = mongoose.model('User');
 
 function getUsers(req, res) {
+    console.log(req.params.id);
     var query = {};
     if (req.params.id) {
-        query.userName = req.params.id;
+        query._id = req.params.id
     }
 
     User.find(query).then(data => {
