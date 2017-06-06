@@ -151,7 +151,7 @@ function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
 
     /** First check if file exists */
-    gfs.files.find({file.metadata.videoId: req.params.id}).toArray(function(err, files){
+    gfs.files.find({metadata.videoId: req.params.id}).toArray(function(err, files){
         if(!files || files.length === 0){
             return res.status(404).json({
                 responseCode: 1,
