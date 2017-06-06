@@ -7,11 +7,10 @@ var Tag = mongoose.model('Tag');
 var User = mongoose.model('User');
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
-
 var videoSchema = new mongoose.Schema({
     filePath: { type: String, required: true },
     tags: [{ type: ObjectId, ref: 'Tag' }],
-    sporter: { type: ObjectId, ref: 'User'},
+    sporter: { type: ObjectId, ref: 'User', required: true},
     created_at: { type: Date, required: true, default: Date.now },
     updated_at: { type: Date, required: true, default: Date.now }
 });

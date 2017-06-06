@@ -4,9 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var passport = require('passport');
-var flash = require('connect-flash');
-var session = require('express-session');
 require('dotenv').config();
 
 var mongoose = require('mongoose');
@@ -31,18 +28,6 @@ mongoose.connect(connectionURL);
 mongoose.Promise = require('q').Promise;
 
 
-//models
-require('./models/tag');
-require('./models/user');
-require('./models/video');
-//require('./models/coach');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-//var coaches = require('./routes/coaches');
-var tags = require('./routes/tags');
-var videos = require('./routes/videos');
-
 function handleError(req, res, statusCode, message) {
     console.log();
     console.log('-------- Error handled --------');
@@ -52,7 +37,7 @@ function handleError(req, res, statusCode, message) {
     console.log('-------- /Error handled --------');
     res.status(statusCode);
     res.json(message);
-};
+}
 
 var app = express();
 
@@ -77,27 +62,32 @@ app.use(function (req, res, next) {
     }
 });
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-    secret: 'groepaisdeallerbeste',
-    resave: false,
-    saveUninitialized: false
-}));
+//models
+require('./models/tag');
+require('./models/user');
+require('./models/video');
+require('./models/message');
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
+// routes
+let index = require('./routes/index');
+let users = require('./routes/users');
+let messages = require('./routes/messages');
+let tags = require('./routes/tags');
+let videos = require('./routes/videos');
+
 
 app.use('/', index);
 app.use('/users', users(handleError));
-//app.use('/coaches', coaches(handleError));
 app.use('/tags', tags(handleError));
 app.use('/videos', videos(handleError));
+app.use('/messages', messages(handleError));
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

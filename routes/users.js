@@ -6,15 +6,16 @@ var async = require('async');
 
 var mongoose = require('mongoose');
 User = mongoose.model('User');
+Video = mongoose.model('Video');
 
 function getUsers(req, res) {
     var query = {};
+
     if (req.params.id) {
-        query.userName = req.params.id;
+        query._id = req.params.id;
     }
 
-    User.find(query).then(data => {
-        console.log(data);
+    User.find(query).populate("sporters").then(data => {
         if (req.params.id) {
             data = data[0];
         }
@@ -23,7 +24,7 @@ function getUsers(req, res) {
 }
 
 function patchRFID(req, res) {
-    User.findOne({'userName': req.params.id}, 'userName', function (err, user) {
+    User.findOne({'userName': req.params.userName}, 'userName', function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
         }
@@ -41,18 +42,16 @@ function patchRFID(req, res) {
 }
 
 function patchVideo(req, res) {
-    User.findOne({'userName': req.params.id}, 'username', function (err, user) {
+    User.findOne({'userName': req.params.userName}, 'username', function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
         }
-
-
     })
 }
 
 function deleteUser(req, res) {
     User.remove({
-        userName: req.params.id
+        userName: req.params.userName
     }, function (err, user) {
         if (err) {
             handleError(req, res, 500, err);
@@ -62,7 +61,7 @@ function deleteUser(req, res) {
 }
 
 function updateUser(req, res) {
-    User.findById(req.params.id, function (err, user) {
+    User.findById(req.params.userName, function (err, user) {
         // user.userName = req.body.userName; // todo check if already exists
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
@@ -84,7 +83,6 @@ function updateUser(req, res) {
  */
 function validateLogin(req, res) {
     User.findOne({'email': req.body.email}, function (err, user) {
-        console.log(user);
         if (err)
             console.log("error");
 
@@ -98,6 +96,17 @@ function validateLogin(req, res) {
             return res.status(200).json(user);
         }
     });
+}
+
+function addUser(req, res) {
+    var user = new User(req.body);
+    user.password = user.generateHash(req.body.password);
+    user
+        .save()
+        .then(user => {
+            res.status(201).json(user);
+        })
+        .fail(err => handleError(req, res, 500, err));
 }
 
 function validateSignUp(req, res) {
@@ -133,20 +142,35 @@ function validateSignUp(req, res) {
   }
 }
 
+function getVideos(req, res)
+{
+    var query = {};
+    if (req.params.id) {
+        query.sporter = req.params.id;
+    }
+
+    Video.find(query).then(data => {
+        res.json(data);
+    }).fail(err => handleError(req, res, 500, err));
+}
+
 
 /* GET users listing. */
 router.route('/')
     .get(getUsers);
-router.route('/:id')
+router.route('/:userName')
     .get(getUsers)
     .put(updateUser)
     .delete(deleteUser);
 
-router.route('/:id/rfid')
+router.route('/:userName/rfid')
     .patch(patchRFID);
 
-router.route('/:id/video')
+router.route('/:userName/video')
     .patch(patchVideo);
+
+router.route('/:id/videos')
+    .get(getVideos);  
 
 router.route('/validate')
     .post(validateLogin);
