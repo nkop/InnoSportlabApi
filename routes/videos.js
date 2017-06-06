@@ -38,6 +38,7 @@ function getVideos(req, res){
 function addVideo(req, res) {
     console.log(req);
     User.findOne({ 'userName' : req.body.sporter }, function (err, user) {
+        console.log(user);
         var video = new Video();
         video.sporter = user;
         video.save()
