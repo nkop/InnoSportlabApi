@@ -42,7 +42,7 @@ function addVideo(req, res) {
         video.save()
             .then(video => {
 
-                upload(video, res, function(err) {
+                upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
                     res.status(201).json(video);
@@ -116,10 +116,10 @@ var storage = GridFsStorage({
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     },
     /** With gridfs we can store additional meta-data along with the file */
-    metadata: function(video, file, cb) {
+    metadata: function(req, file, cb, res) {
         cb(null,
             {   originalname: file.originalname,
-                videoId: video.id
+                videoId: res.json().id
             });
     },
     root: 'ctFiles' //root name for collection to store files into
@@ -129,7 +129,7 @@ var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
 
-function uploadVideo(req, res){
+function uploadVideo(req, res, video){
 
     upload(req,res,function(err){
         if(err){
