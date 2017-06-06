@@ -10,13 +10,12 @@ Video = mongoose.model('Video');
 
 function getUsers(req, res) {
     var query = {};
-    if (req.params.userName) {
-        query.userName = req.params.userName;
+
+    if (req.params.id) {
+        query._id = req.params.id;
     }
 
-    User.find(query).then(data => {
-        console.log(data);
-        // if (req.params.userName) {
+    User.find(query).populate("sporters").then(data => {
         if (req.params.id) {
             data = data[0];
         }

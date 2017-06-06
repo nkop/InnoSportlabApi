@@ -12,17 +12,17 @@ function getMessages(req, res) {
     User.findById(req.params.id)
         .populate("messages")
         .then(data => {
-        res.json(data.messages)
-})
-.catch(err => handleError(req, res, 500, err));
+            res.json(data.messages)
+        })
+        .catch(err => handleError(req, res, 500, err));
 }
 
 function getSingleMessage(req, res) {
     Message.findById(req.params.id)
         .populate("invitor")
         .then(data => {
-        res.json(data);
-}).catch(err => handleError(req, res, 500, err));
+            res.json(data);
+        }).catch(err => handleError(req, res, 500, err));
 }
 
 // add's an invite to a coach
@@ -50,7 +50,7 @@ function inviteCoach(req, res, next) {
 
             let message = new Message();// create a new invite
             message.invitor = invitor; // set invitor (the user)
-            message.message = "You have received an invitation.";
+            message.message = "You have received an invitation from.";
             message.type = req.body.type;
             message.save().catch(err => handleError(req, res, 500, err));  // save the invite
             // add the invite to the coaches invites
@@ -77,11 +77,13 @@ function acceptInvite(req, res, next) {
             let sporterId = message.invitor;
 
             user.sporters.push(sporterId);
-            user.save().catch(error => handleError(req,res,500,err));
+            user.save().catch(error => handleError(req, res, 500, err));
 
             message.read = true;
             message.accepted = true;
-            message.save().catch(error => handleError(req,res,500,err));
+            message.save().then(() => {
+                res.json({"message": "Invite has been accepted"})
+            }).catch(error => handleError(req, res, 500, err));
         });
     });
 }
@@ -90,7 +92,9 @@ function declineInvite(req, res, next) {
     Message.findOne({_id: req.body.id}, function (err, message) {
         message.read = true;
         message.accepted = false;
-        message.save().catch(error => handleError(req,res,500,err));
+        message.save().then(() => {
+            res.json({"message": "Invite has been declined"})
+        }).catch(error => handleError(req, res, 500, err));
     });
 }
 
