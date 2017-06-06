@@ -44,12 +44,12 @@ function addVideo(req, res) {
             .then(video => {
                 console.log(video);
                 console.log(res.json());
-
+/*
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
                     res.status(201).json(video);
-                });
+                });*/
             })
             .fail(err => handleError(req, res, 500, err));
     });
