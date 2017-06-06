@@ -122,10 +122,9 @@ var storage = GridFsStorage({
         var datetimestamp = Math.round(Date.now()/1000);
         cb(null, file.fieldname + '-' + req.params.id + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     },
-    /** With gridfs we can store aditional meta-data along with the file */
+    /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
         cb(null,
-
             {   originalname: file.originalname,
                 sporterid: req.params.id
             });
@@ -143,7 +142,8 @@ function uploadVideo(req, res){
             res.json({error_code:1,err_desc:err});
             return;
         }
-        res.json();
+        console.log(res);
+        res.json({error_code:0,err_desc:null,});
     });
 }
 
