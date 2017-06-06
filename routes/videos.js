@@ -143,7 +143,7 @@ function uploadVideo(req, res){
             res.json({error_code:1,err_desc:err});
             return;
         }
-        res.json({error_code:0,err_desc:null,});
+        res.json();
     });
 }
 
@@ -180,8 +180,8 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
-router.route('/:filename')
-    .get(getVideo)
+router.route('/:id/video')
+    .get(getVideo);
 
 router.route('/:id/upload')
     .post(uploadVideo);
