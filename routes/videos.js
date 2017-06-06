@@ -142,8 +142,8 @@ function uploadVideo(req, res){
             res.json({error_code:1,err_desc:err});
             return;
         }
-        console.log(res);
-        res.json({error_code:0,err_desc:null,});
+        console.log(res.json());
+        res.json();
     });
 }
 
