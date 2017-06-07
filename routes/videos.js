@@ -28,7 +28,7 @@ function getVideos(req, res){
     }
     console.log(query);
 
-    Video.find(query).then(data => {
+    Video.find(query).populate('tags').then(data => {
         console.log(data);
         if (req.params.id) {
             data = data[0];
