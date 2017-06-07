@@ -24,14 +24,12 @@ function getTags(req, res){
 }
 
 function addTag(req, res){
-    console.log(req.body.videoId);
     var tag = new Tag(req.body);
     tag.created_at = Date.now();
     tag.updated_at = Date.now();
     tag
         .save()
         .then(tag => {
-            console.log(tag);
             addTagTovideo(req, res, tag);
         })
         .fail(err => handleError(req, res, 500, err));
@@ -40,9 +38,8 @@ function addTag(req, res){
 function addTagTovideo(req, res, tag) {
     Video.findOne({'_id': req.body.videoId})
         .then(video => {
-                console.log(video);
                 console.log(video.tags);
-                video.tags.add(tag);
+                video.tags.push(tag);
                 console.log("test1");
                 video.save()
                     .then(tag => {
