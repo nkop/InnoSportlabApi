@@ -43,6 +43,7 @@ function addTagTovideo(req, res, tag) {
                 console.log(video);
                 console.log(video.tags);
                 video.tags.add(tag);
+                console.log("test1");
                 video.save()
                     .then(tag => {
                         console.log("test");
