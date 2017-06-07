@@ -24,7 +24,7 @@ function getTags(req, res){
 }
 
 function addTag(req, res){
-    console.log("adding Tag");
+    console.log(req.body.videoId);
     var tag = new Tag(req.body);
     tag.created_at = Date.now();
     tag.updated_at = Date.now();
@@ -32,16 +32,23 @@ function addTag(req, res){
         .save()
         .then(tag => {
             console.log(tag);
-            Video.findOne({'id': req.body.videoId})
-                .then(video => {
-                    console.log(video);
-                    console.log(video.tags);
-                    video.tags.add(tag);
-                    video.save();
-                    }
-                )
+            addTagTovideo(req, res, tag);
         })
         .fail(err => handleError(req, res, 500, err));
+}
+
+function addTagTovideo(req, res, tag) {
+    Video.findOne({'id': req.body.videoId})
+        .then(video => {
+                console.log(video);
+                console.log(video.tags);
+                video.tags.add(tag);
+                video.save()
+                    .then(tag => {
+                        res.status(201).json(tag);
+                    });
+            }
+        )
 }
 
 function patchTag(req, res){
