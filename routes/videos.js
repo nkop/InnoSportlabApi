@@ -21,10 +21,12 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
 function getVideos(req, res){
+    console.log(req.params.id);
     var query = {};
     if (req.params.id) {
         query.id = req.params.id;
     }
+    console.log(query);
 
     Video.find(query).then(data => {
         console.log(data);
