@@ -24,7 +24,7 @@ function getVideos(req, res){
     console.log(req.params.id);
     var query = {};
     if (req.params.id) {
-        query.id = req.params.id;
+        query._id = req.params.id;
     }
     console.log(query);
 
