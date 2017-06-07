@@ -45,6 +45,7 @@ function addTagTovideo(req, res, tag) {
                 video.tags.add(tag);
                 video.save()
                     .then(tag => {
+                        console.log("test");
                         res.status(201).json(tag);
                     });
             }
