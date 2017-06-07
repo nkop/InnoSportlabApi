@@ -38,7 +38,7 @@ function addTag(req, res){
 }
 
 function addTagTovideo(req, res, tag) {
-    Video.findOne({'id': req.body.videoId})
+    Video.findOne({'_id': req.body.videoId})
         .then(video => {
                 console.log(video);
                 console.log(video.tags);
