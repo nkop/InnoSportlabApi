@@ -40,6 +40,7 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
+    console.log(req.files);
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
@@ -69,6 +70,7 @@ function deleteVideo(req, res){
 var storage = GridFsStorage({
     gfs : gfs,
     filename: function (req, file, cb) {
+        console.log(file);
         var datetimestamp = Math.round(Date.now()/1000);
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     },
