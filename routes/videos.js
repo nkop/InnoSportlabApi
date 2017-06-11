@@ -67,7 +67,7 @@ function addVideo(req, res) {
             .fail(err => handleError(req, res, 500, err));
     });
 }
-var sUpload = upload.single('file');
+var sUpload = testUpload.single('file');
 
 function deleteVideo(req, res){
     Video.remove({
