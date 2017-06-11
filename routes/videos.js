@@ -38,38 +38,21 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
-    console.log(req.body.sporter);
-    User.findOne({ 'userName' : req.body.sporter }, function (err, user) {
-        console.log(user);
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
         video.save()
             .then(video => {
-                console.log(video);
-                console.log(res.json());
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
-                    res.status(201).json(video);
                 });
-            })
+                res.json();
+             })
             .fail(err => handleError(req, res, 500, err));
     });
 }
 
-/*function addVideo(req, res){
-    var fail = null;
-    for (var reqVideo in req.body.video){
-        video.filePath = reqVideo.filePath;
-        var video = new Video();
-        if (reqVideo.tags != null) video.tags = reqVideo.tags;
-        video.save()
-            .fail(fail = err);
-        userPatchVideo(reqVideo.userName, video);
-
-    }
-    if (fail != null) handleError(req, res, 500, fail);
-}*/
 
 function userPatchVideo(userName, video){
     User.findOne({ 'userName' : userName }, 'userName', function (err, user) {
@@ -90,21 +73,6 @@ function userPatchVideo(userName, video){
     });
 }
 
-/*function addSingleVideo(req, res) {
-    User.findOne({ 'userName' : req.body.sporter }, function (err, user) {
-        console.log(user);
-        var video = new Video();
-        video.filePath = req.body.filePath;
-        video.sporter = user;
-        video
-            .save()
-            .then(video => {
-                res.status(201).json(video);
-            })
-            .fail(err => handleError(req, res, 500, err));  
-    });   
-}*/
-
 function deleteVideo(req, res){
     Video.remove({
         _id: req.params.id
@@ -121,10 +89,10 @@ var storage = GridFsStorage({
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     },
     /** With gridfs we can store additional meta-data along with the file */
-    metadata: function(req, file, cb, res) {
+    metadata: function(req, file, cb) {
         cb(null,
             {   originalname: file.originalname,
-                videoId: res.json().id
+                videoId: req.params.username
             });
     },
     root: 'ctFiles' //root name for collection to store files into
@@ -134,8 +102,12 @@ var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
 
-function uploadVideo(req, res, video){
-
+function uploadVideo(req, res){
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        var video = new Video();
+        video.sporter = user;
+        video.save()
+    });
     upload(req,res,function(err){
         if(err){
             res.json({error_code:1,err_desc:err});
@@ -147,24 +119,27 @@ function uploadVideo(req, res, video){
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
-
-    /** First check if file exists */
-    gfs.files.find({'metadata.videoId': req.params.id}).toArray(function(err, files){
-        if(!files || files.length === 0){
-            return res.status(404).json({
-                responseCode: 1,
-                responseMessage: "error"
+    Video.findOne({ '_id' : req.params.id }, function (err, video) {
+        User.findOne({'_id': video.sporter}, function (err, user) {
+            /** First check if file exists */
+            gfs.files.find({'metadata.videoId': user.userName}).toArray(function (err, files) {
+                if (!files || files.length === 0) {
+                    return res.status(404).json({
+                        responseCode: 1,
+                        responseMessage: "error"
+                    });
+                }
+                /** create read stream */
+                var readstream = gfs.createReadStream({
+                    filename: files[0].filename,
+                    root: "ctFiles"
+                });
+                /** set the proper content type */
+                res.set('Content-Type', files[0].contentType)
+                /** return response */
+                return readstream.pipe(res);
             });
-        }
-        /** create read stream */
-        var readstream = gfs.createReadStream({
-            filename: files[0].filename,
-            root: "ctFiles"
         });
-        /** set the proper content type */
-        res.set('Content-Type', files[0].contentType)
-        /** return response */
-        return readstream.pipe(res);
     });
 }
 
@@ -172,11 +147,13 @@ function getVideo(req, res){
 /* GET videos listing. */
 router.route('/')
     .get(getVideos)
-    .post(addVideo);
 
 router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
+
+router.route('/:username')
+    .post(addVideo)
 
 router.route('/:id/video')
     .get(getVideo);
