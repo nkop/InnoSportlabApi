@@ -20,6 +20,8 @@ var conn = mongoose.connection;
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
+var vid;
+
 function getVideos(req, res){
     console.log(req.params.id);
     var query = {};
@@ -43,6 +45,7 @@ function addVideo(req, res) {
         video.sporter = user;
         video.save()
             .then(video => {
+                vid = video;
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
@@ -72,7 +75,7 @@ var storage = GridFsStorage({
     metadata: function(req, file, cb) {
         cb(null,
             {   originalname: file.originalname,
-                videoId: req.params.username
+                videoId: vid._id
             });
     },
     root: 'ctFiles' //root name for collection to store files into
