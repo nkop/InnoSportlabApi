@@ -47,29 +47,9 @@ function addVideo(req, res) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.json();
+                res.status(201).json(video);
              })
             .fail(err => handleError(req, res, 500, err));
-    });
-}
-
-
-function userPatchVideo(userName, video){
-    User.findOne({ 'userName' : userName }, 'userName', function (err, user) {
-        if (err) { handleError(req, res, 500, err); }
-
-        if (user.videos == null) {
-            var array = [video._id];
-            user.videos = array;
-        } else {
-            user.videos.push(video._id);
-        }
-        user.updated_at = Date.now();
-
-        user.save(function(err){
-            if (err) {handleError(req, res, 500, err); }
-            res.json(user);
-        })
     });
 }
 
@@ -101,21 +81,6 @@ var storage = GridFsStorage({
 var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
-
-function uploadVideo(req, res){
-    User.findOne({ 'userName' : req.params.username }, function (err, user) {
-        var video = new Video();
-        video.sporter = user;
-        video.save()
-    });
-    upload(req,res,function(err){
-        if(err){
-            res.json({error_code:1,err_desc:err});
-            return;
-        }
-        res.json();
-    });
-}
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
