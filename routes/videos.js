@@ -9,9 +9,6 @@ var multer = require('multer');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
-var config = require('../config/database');
-
-
 
 var mongoose = require('mongoose');
 Video = mongoose.model('Video');
@@ -22,10 +19,7 @@ var conn = mongoose.connection;
 
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
-
 var vid;
-
-
 
 var testStorage = GridFsStorage({
     gfs: gfs,
@@ -62,12 +56,9 @@ function addVideo(req, res) {
             .then(video => {
                 vid = video;
                 console.log(vid);
-                /*upload(req, res, function(err) {
+                upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
-                });*/
-                sUpload(req, res, function (err) {
-                    console.log(err);
                 });
                 res.status(201).json(video);
              })
@@ -89,8 +80,7 @@ var storage = GridFsStorage({
     gfs : gfs,
     filename: function (req, file, cb) {
         console.log(file);
-        var datetimestamp = Math.round(Date.now()/1000);
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
+        cb(null, vid._id);
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
@@ -113,7 +103,7 @@ function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
     Video.findOne({'_id': req.params.id }, function(err, video) {
         if(video != null) {
-            gfs.files.find({'metadata.videoId': video._id}).toArray(function (err, files) {
+            gfs.files.find({'filename': video._id}).toArray(function (err, files) {
                 if (!files || files.length === 0) {
                     return res.status(404).json({
                         responseCode: 1,
