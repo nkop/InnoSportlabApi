@@ -21,8 +21,8 @@ var userSchema = new mongoose.Schema({
     rfid: {type: String, required: false},
     coach: {type: Boolean, default: false},
     messages: [{ type: ObjectId, ref: 'Message', required: false }],
+    favoriteVideos: [{ type: ObjectId, ref: 'Video', required: false }],
     sporters: [{ type: ObjectId, ref: 'User'}],
-    //videos: [{ type: ObjectId, ref: 'Video', required: false }],
     created_at: {type: Date, required: false, default: Date.now},
     updated_at: {type: Date, required: false, default: Date.now}
 });

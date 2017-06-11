@@ -30,12 +30,15 @@ function getVideos(req, res){
     }
     console.log(query);
 
-    Video.find(query).populate('tags').then(data => {
-        console.log(data);
-        if (req.params.id) {
-            data = data[0];
-        }
-        res.json(data);
+    Video.find(query)
+        .populate('tags')
+        .populate('sporter')
+        .then(data => {
+            console.log(data);
+            if (req.params.id) {
+                data = data[0];
+            }
+            res.json(data);
     }).fail(err => handleError(req, res, 500, err));
 }
 
@@ -111,6 +114,41 @@ function getVideo(req, res){
 
 }
 
+function favorite(req, res) {
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        user.favoriteVideos.push(req.params.id);
+        user.save(function (err) {
+            if (err) {
+                handleError(req, res, 500, err);
+            }
+            res.json(user);
+        })
+    });
+}
+
+function unfavorite(req, res) {
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        var index = user.favoriteVideos.indexOf(req.params.id);
+        if (index > -1) {
+            user.favoriteVideos.splice(index, 1);
+        }
+        user.save(function (err) {
+            if (err) {
+                handleError(req, res, 500, err);
+            }
+            res.json(user);
+        })
+    });
+}
+
+function getFavoriteVideos(req, res) {
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        Video.find({ '_id' : { $in: user.favoriteVideos }  }, function (err, data) {
+            res.json(data);
+        });
+    });
+}
+
 
 /* GET videos listing. */
 router.route('/')
@@ -125,6 +163,15 @@ router.route('/:username')
 
 router.route('/:id/video')
     .get(getVideo);
+
+router.route('/:id/favorite/:username')
+    .get(favorite);
+
+router.route('/:id/unfavorite/:username')
+    .get(unfavorite);
+
+router.route('/:username/favorites')
+    .get(getFavoriteVideos);
 
 module.exports = function (errCallback){
     console.log('Initializing video routing module');
