@@ -72,7 +72,7 @@ var storage = GridFsStorage({
     metadata: function(req, file, cb) {
         cb(null,
             {   originalname: file.originalname,
-                videoId: req.params.id
+                videoId: req.params.username
             });
     },
     root: 'ctFiles' //root name for collection to store files into
