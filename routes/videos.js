@@ -84,28 +84,26 @@ var upload = multer({ //multer settings for single upload
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
-    Video.findOne({ '_id' : req.params.id }, function (err, video) {
-        User.findOne({'_id': video.sporter}, function (err, user) {
-            /** First check if file exists */
-            gfs.files.find({'metadata.videoId': user.userName}).toArray(function (err, files) {
-                if (!files || files.length === 0) {
-                    return res.status(404).json({
-                        responseCode: 1,
-                        responseMessage: "error"
-                    });
-                }
-                /** create read stream */
-                var readstream = gfs.createReadStream({
-                    filename: files[0].filename,
-                    root: "ctFiles"
+    Video.findOne({'_id': req.params.id }, function(err, video) {
+        gfs.files.find({'_id': video._id }).toArray(function (err, files) {
+            if (!files || files.length === 0) {
+                return res.status(404).json({
+                    responseCode: 1,
+                    responseMessage: "error"
                 });
-                /** set the proper content type */
-                res.set('Content-Type', files[0].contentType)
-                /** return response */
-                return readstream.pipe(res);
+            }
+            /** create read stream */
+            var readstream = gfs.createReadStream({
+                filename: files[0].filename,
+                root: "ctFiles"
             });
+            /** set the proper content type */
+            res.set('Content-Type', files[0].contentType)
+            /** return response */
+            return readstream.pipe(res);
         });
-    });
+    })
+
 }
 
 
