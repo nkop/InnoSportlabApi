@@ -11,11 +11,7 @@ var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
 var config = require('../config/database');
 
-var testStorage = require('multer')({
-    url: config.remote
-});
 
-var testUpload = multer({ storage: testStorage });
 
 var mongoose = require('mongoose');
 Video = mongoose.model('Video');
@@ -28,6 +24,17 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
 var vid;
+
+
+
+var testStorage = GridFsStorage({
+    gfs: gfs,
+    filename: function(req, file, cb) {
+        cb(null, vid._id);
+    }
+});
+
+var testUpload = multer({ storage: testStorage });
 
 function getVideos(req, res){
     console.log(req.params.id);
