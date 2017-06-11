@@ -9,6 +9,13 @@ var multer = require('multer');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
+var config = require('../config/database');
+
+var testStorage = require('multer')({
+    url: config.remote
+});
+
+var testUpload = multer({ storage: testStorage });
 
 var mongoose = require('mongoose');
 Video = mongoose.model('Video');
@@ -48,15 +55,19 @@ function addVideo(req, res) {
             .then(video => {
                 vid = video;
                 console.log(vid);
-                upload(req, res, function(err) {
+                /*upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
+                });*/
+                sUpload(req, res, function (err) {
+                    console.log(err);
                 });
                 res.status(201).json(video);
              })
             .fail(err => handleError(req, res, 500, err));
     });
 }
+var sUpload = upload.single('file');
 
 function deleteVideo(req, res){
     Video.remove({
@@ -88,6 +99,8 @@ var storage = GridFsStorage({
 var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
+
+
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
