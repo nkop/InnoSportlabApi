@@ -145,7 +145,9 @@ function getFavoriteVideos(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         Video.find({ '_id' : { $in: user.favoriteVideos }  }, function (err, data) {
             res.json(data);
-        });
+        })
+        .populate('tags')
+        .populate('sporter');
     });
 }
 
