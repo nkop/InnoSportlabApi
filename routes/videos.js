@@ -46,6 +46,7 @@ function addVideo(req, res) {
         video.save()
             .then(video => {
                 vid = video;
+                console.log(vid);
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
@@ -73,6 +74,7 @@ var storage = GridFsStorage({
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
+        console.log(vid);
         cb(null,
             {   originalname: file.originalname,
                 videoId: vid._id
