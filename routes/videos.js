@@ -165,6 +165,16 @@ function getFavoriteVideos(req, res) {
     });
 }
 
+function getCoachingVideos(req, res) {
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        Video.find({ 'sporter' : { $in: user.sporters }  }, function (err, data) {
+            res.json(data);
+        })
+        .populate('tags')
+        .populate('sporter');
+    });
+}
+
 
 /* GET videos listing. */
 router.route('/')
@@ -188,6 +198,9 @@ router.route('/:id/unfavorite/:username')
 
 router.route('/:username/favorites')
     .get(getFavoriteVideos);
+
+router.route('/:username/coach')
+    .get(getCoachingVideos);
 
 module.exports = function (errCallback){
     console.log('Initializing video routing module');
