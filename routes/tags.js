@@ -6,6 +6,7 @@ var async = require('async');
 
 var mongoose = require('mongoose');
 Tag = mongoose.model('Tag');
+Video = mongoose.model('Video');
 
 function getTags(req, res){
     var query = {};
@@ -23,13 +24,30 @@ function getTags(req, res){
 }
 
 function addTag(req, res){
-    console.log("adding Tag");
     var tag = new Tag(req.body);
     tag.created_at = Date.now();
     tag.updated_at = Date.now();
     tag
         .save()
+        .then(tag => {
+            addTagTovideo(req, res, tag);
+        })
         .fail(err => handleError(req, res, 500, err));
+}
+
+function addTagTovideo(req, res, tag) {
+    Video.findOne({'_id': req.body.videoId})
+        .then(video => {
+                console.log(video.tags);
+                video.tags.push(tag);
+                console.log("test1");
+                video.save()
+                    .then(tag => {
+                        console.log("test");
+                        res.status(201).json(tag);
+                    });
+            }
+        )
 }
 
 function patchTag(req, res){
