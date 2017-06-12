@@ -9,12 +9,12 @@ User = mongoose.model('User');
 Message = mongoose.model('Message');
 
 function getMessages(req, res) {
-    User.findById(req.params.id)
-        .populate("messages")
-        .then(data => {
-            res.json(data.messages)
+    User.findOne({ '_id' : req.params.id }, function (err, user) {
+        Message.find({ '_id' : { $in: user.messages }  }, function (err, data) {
+            res.json(data);
         })
-        .catch(err => handleError(req, res, 500, err));
+        .populate('invitor');
+    });
 }
 
 function getSingleMessage(req, res) {
