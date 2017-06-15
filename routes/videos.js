@@ -81,6 +81,7 @@ function deleteVideo(req, res){
 
 var storage = GridFsStorage({
     gfs : gfs,
+    chunkSize: 1024 ,
     filename: function (req, file, cb) {
         console.log(file);
         cb(null, vid._id);
