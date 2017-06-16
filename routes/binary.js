@@ -5,7 +5,6 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://admin:admin@innosportlab-shard-00-00-0tqf6.mongodb.net:27017,innosportlab-shard-00-01-0tqf6.mongodb.net:27017,innosportlab-shard-00-02-0tqf6.mongodb.net:27017/InnoSportlab?ssl=true&replicaSet=InnoSportlab-shard-0&authSource=admin');
 var conn = mongoose.connection;
 var multer = require('multer');
 var GridFsStorage = require('multer-gridfs-storage');
@@ -33,7 +32,7 @@ app.use(bodyParser.json());
 /** Setting up storage using multer-gridfs-storage */
 var storage = GridFsStorage({
     gfs : gfs,
-    chunkSize: 1024,
+    chunkSize: 16320,
     filename: function (req, file, cb) {
         var datetimestamp = Date.now();
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
@@ -68,21 +67,19 @@ var upload = multer({ //multer settings for single upload
 // }
 
 /** API path that will upload the files */
-app.post('/:username/upload', function(req, res) {
-    User.findOne({'userName': req.params.username}, function (err, user) {
-        var video = new Video();
-        video.sporter = user;
-        video.save().then(video => {
-            vid = video;
-            upload(req, res, function (err) {
+app.post('/upload', function(req, res) {
+    // User.findOne({ 'userName' : req.params.username }, function (err, user) {
+    //     var video = new Video();
+    //     video.sporter = user;
+    //     video.save().then(video => {
+    //         vid = video;
+            upload(req, res, function(err) {
                 if (err)
                     handleError(req, res, 500, err);
             });
-            res.json({message: "Video successfully uploaded"})
-        })
-            .fail(err => handleError(req, res, 500, err));
-    })
-});
+            res.json({ message: "Video successfully uploaded" })
+        });
+            // .fail(err => handleError(req, res, 500, err));
 
 app.get('/:filename', function(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
