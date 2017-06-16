@@ -71,7 +71,7 @@ var storage = GridFsStorage({
     gfs: gfs,
     chunkSize: 4096 ,
     filename: function (req, file, cb) {
-        console.log('Filename');
+        console.log(vid._id);
         cb(null, vid._id);
     },
     log: function(err, log) {
