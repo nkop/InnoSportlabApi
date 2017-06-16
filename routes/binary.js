@@ -13,6 +13,12 @@ var Grid = require('gridfs-stream');
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
+var vid;
+
+Video = mongoose.model('Video');
+Tag = mongoose.model('Tag');
+User = mongoose.model('User');
+
 /** Seting up server to accept cross-origin browser requests */
 app.use(function(req, res, next) { //allow cross origin requests
     res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
@@ -27,7 +33,7 @@ app.use(bodyParser.json());
 /** Setting up storage using multer-gridfs-storage */
 var storage = GridFsStorage({
     gfs : gfs,
-    chunkSize: 16320,
+    chunkSize: 1024,
     filename: function (req, file, cb) {
         var datetimestamp = Date.now();
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
@@ -62,14 +68,20 @@ var upload = multer({ //multer settings for single upload
 // }
 
 /** API path that will upload the files */
-app.post('/upload', function(req, res) {
-    upload(req, res, function (err) {
-        if (err) {
-            res.json({error_code: 1, err_desc: err});
-            return;
-        }
-        res.json({ message: "Video successfully uploaded" })
-    });
+app.post('/:username/upload', function(req, res) {
+    User.findOne({'userName': req.params.username}, function (err, user) {
+        var video = new Video();
+        video.sporter = user;
+        video.save().then(video => {
+            vid = video;
+            upload(req, res, function (err) {
+                if (err)
+                    handleError(req, res, 500, err);
+            });
+            res.json({message: "Video successfully uploaded"})
+        })
+            .fail(err => handleError(req, res, 500, err));
+    })
 });
 
 app.get('/:filename', function(req, res){
