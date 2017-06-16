@@ -51,7 +51,7 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
-    console.log(req.files);
+    console.log(gfs);
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
@@ -94,7 +94,14 @@ var storage = GridFsStorage({
                 videoId: vid._id
             });
     },
-    root: 'ctFiles' //root name for collection to store files into
+    root: 'ctFiles', //root name for collection to store files into
+    log: function(err, log) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(log.message, log.extra);
+        }
+    }
 });
 
 var upload = multer({ //multer settings for single upload
