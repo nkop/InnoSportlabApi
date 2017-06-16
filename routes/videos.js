@@ -57,11 +57,6 @@ function addVideo(req, res) {
     //     video.save()
     //         .then(video => {
     //             vid = video;
-                upload(req, res, function(err) {
-                    if (err)
-                        handleError(req, res, 500, err);
-                });
-                res.json({ message: "Video successfully uploaded" })
              // })
            // .fail(err => handleError(req, res, 500, err));
     // });
@@ -194,8 +189,14 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
-router.route('/:username')
-    .post(addVideo)
+router.route('/:username', function (req, res) {
+    upload(req, res, function(err) {
+        if (err)
+            handleError(req, res, 500, err);
+    });
+    res.json({ message: "Video successfully uploaded" })
+})
+    // .post(addVideo)
 
 router.route('/:id/video')
     .get(getVideo);
