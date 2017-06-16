@@ -9,8 +9,10 @@ var multer = require('multer');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
+var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
+
 Video = mongoose.model('Video');
 Tag = mongoose.model('Tag');
 User = mongoose.model('User');
@@ -21,14 +23,16 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
 
-var testStorage = GridFsStorage({
-    gfs: gfs,
-    filename: function(req, file, cb) {
-        cb(null, vid._id);
-    }
+
+router.use(function(req, res, next) { //allow cross origin requests
+    res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Credentials", true);
+    next();
 });
 
-var testUpload = multer({ storage: testStorage });
+router.use(bodyParser.json());
 
 function getVideos(req, res){
     console.log(req.params.id);
@@ -51,15 +55,20 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
-    // User.findOne({ 'userName' : req.params.username }, function (err, user) {
-    //     var video = new Video();
-    //     video.sporter = user;
-    //     video.save()
-    //         .then(video => {
-    //             vid = video;
-             // })
-           // .fail(err => handleError(req, res, 500, err));
-    // });
+    User.findOne({ 'userName' : req.params.username }, function (err, user) {
+        var video = new Video();
+        video.sporter = user;
+        video.save()
+            .then(video => {
+                vid = video;
+                upload(req, res, function(err) {
+                    if (err)
+                        handleError(req, res, 500, err);
+                });
+                res.json({ message: "Video successfully uploaded" })
+             })
+           .fail(err => handleError(req, res, 500, err));
+    });
 }
 var sUpload = testUpload.single('file');
 
@@ -89,9 +98,7 @@ var storage = GridFsStorage({
                 //videoId: vid._id
             });
     },
-    root: 'ctFiles', //root name for collection to store files into
-    log:
-        function(err, log) {
+    log: function(err, log) {
         console.log('LOG');
          if (err) {
              console.error(err);
@@ -190,13 +197,7 @@ router.route('/:id')
     .delete(deleteVideo);
 
 router.route('/:username')
-    .post(function (req, res) {
-        upload(req, res, function(err) {
-            if (err)
-                handleError(req, res, 500, err);
-        });
-        res.json({ message: "Video successfully uploaded" })
-    })
+    .post(addVideo)
 
 router.route('/:id/video')
     .get(getVideo);
