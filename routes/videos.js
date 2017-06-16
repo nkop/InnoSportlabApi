@@ -49,8 +49,8 @@ function addVideo(req, res) {
             .then(video => {
                 vid = video;
                 upload(req, res, function(err) {
-                    if (err)
-                        handleError(req, res, 500, err);
+                    //if (err)
+                        //handleError(req, res, 500, err);
                     res.json({ 'message': "Video opgeslagen"});
                 });
              })
