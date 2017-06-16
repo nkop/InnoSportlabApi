@@ -96,7 +96,7 @@ app.get('/:filename', function(req, res){
 });
 
 module.exports = function (errCallback) {
-    console.log('Initializing coaches routing module');
+    console.log('Initializing binary routing module');
     handleError = errCallback;
     return app;
 };

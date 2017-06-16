@@ -52,7 +52,7 @@ function addVideo(req, res) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.status(201).json(video);
+                res.json(video);
              })
            .fail(err => handleError(req, res, 500, err));
     });
