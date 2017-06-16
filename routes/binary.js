@@ -1,6 +1,3 @@
-/**
- * Created by jeroe on 16-6-2017.
- */
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -11,12 +8,6 @@ var GridFsStorage = require('multer-gridfs-storage');
 var Grid = require('gridfs-stream');
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
-
-var vid;
-
-Video = mongoose.model('Video');
-Tag = mongoose.model('Tag');
-User = mongoose.model('User');
 
 /** Seting up server to accept cross-origin browser requests */
 app.use(function(req, res, next) { //allow cross origin requests
@@ -68,20 +59,16 @@ var upload = multer({ //multer settings for single upload
 
 /** API path that will upload the files */
 app.post('/upload', function(req, res) {
-    // User.findOne({ 'userName' : req.params.username }, function (err, user) {
-    //     var video = new Video();
-    //     video.sporter = user;
-    //     video.save().then(video => {
-    //         vid = video;
-            upload(req, res, function(err) {
-                if (err)
-                    handleError(req, res, 500, err);
-            });
-            res.json({ message: "Video successfully uploaded" })
-        });
-            // .fail(err => handleError(req, res, 500, err));
+    upload(req, res, function (err) {
+        if (err) {
+            res.json({error_code: 1, err_desc: err});
+            return;
+        }
+        res.json({ message: "Video successfully uploaded" })
+    });
+});
 
-app.get('/:filename', function(req, res){
+app.get('/file/:filename', function(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
 
     /** First check if file exists */
@@ -103,9 +90,3 @@ app.get('/:filename', function(req, res){
         return readstream.pipe(res);
     });
 });
-
-module.exports = function (errCallback) {
-    console.log('Initializing coaches routing module');
-    handleError = errCallback;
-    return app;
-};
