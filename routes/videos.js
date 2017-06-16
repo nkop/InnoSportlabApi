@@ -92,11 +92,14 @@ var storage = GridFsStorage({
             });
     },
     log: function(err, log) {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(log.message, log.extra);
-        }
+        console.log(log.message + " ghello ");
+        console.log(log.extra + " ghello2 ");
+        console.log(err + " ghello3 ");
+        // if (err) {
+        //     console.error(err);
+        // } else {
+        //     console.log(log.message, log.extra);
+        // }
     }
 });
 
