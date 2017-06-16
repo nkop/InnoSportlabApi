@@ -51,14 +51,12 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
-    console.log(gfs);
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
         video.save()
             .then(video => {
                 vid = video;
-                console.log(vid);
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
