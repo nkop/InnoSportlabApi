@@ -90,3 +90,9 @@ app.get('/file/:filename', function(req, res){
         return readstream.pipe(res);
     });
 });
+
+module.exports = function (errCallback){
+    console.log('Initializing video routing module');
+    handleError = errCallback;
+    return router;
+}
