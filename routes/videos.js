@@ -6,6 +6,7 @@ var express = require('express');
 var router = express();
 var _ = require('underscore');
 var multer = require('multer');
+var bodyParser = require('body-parser');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
@@ -20,6 +21,16 @@ var conn = mongoose.connection;
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
+
+router.use(function(req, res, next) { //allow cross origin requests
+    res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
+    res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Credentials", true);
+    next();
+});
+
+router.use(bodyParser.json());
 
 var testStorage = GridFsStorage({
     gfs: gfs,
