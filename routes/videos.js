@@ -51,8 +51,8 @@ function addVideo(req, res) {
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
+                    res.json({ 'message': "Video opgeslagen"});
                 });
-                res.json({ 'message': "Video opgeslagen"});
              })
            .fail(err => handleError(req, res, 500, err));
     });
