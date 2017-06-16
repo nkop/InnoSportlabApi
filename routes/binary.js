@@ -68,7 +68,7 @@ var upload = multer({ //multer settings for single upload
 // }
 
 /** API path that will upload the files */
-app.post('/upload', function(req, res) {
+app.post('/:username/upload', function(req, res) {
     User.findOne({'userName': req.params.username}, function (err, user) {
         var video = new Video();
         video.sporter = user;
