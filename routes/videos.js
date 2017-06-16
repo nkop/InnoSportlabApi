@@ -51,6 +51,7 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
+    console.log('testpaul');
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
@@ -90,7 +91,6 @@ var storage = GridFsStorage({
             {   originalname: file.originalname,
                 videoId: vid._id
             });
-        console.log(file);
     },
     log: function(err, log) {
          if (err) {
