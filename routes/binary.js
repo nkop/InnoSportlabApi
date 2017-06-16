@@ -1,5 +1,5 @@
 var express = require('express');
-var app = express();
+var router = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var conn = mongoose.connection;
@@ -10,7 +10,7 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
 /** Seting up server to accept cross-origin browser requests */
-app.use(function(req, res, next) { //allow cross origin requests
+router.use(function(req, res, next) { //allow cross origin requests
     res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
     res.header("Access-Control-Allow-Origin", "http://localhost:3000");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -18,7 +18,7 @@ app.use(function(req, res, next) { //allow cross origin requests
     next();
 });
 
-app.use(bodyParser.json());
+router.use(bodyParser.json());
 
 /** Setting up storage using multer-gridfs-storage */
 var storage = GridFsStorage({
@@ -58,7 +58,7 @@ var upload = multer({ //multer settings for single upload
 // }
 
 /** API path that will upload the files */
-app.post('/upload', function(req, res) {
+router.post('/upload', function(req, res) {
     upload(req, res, function (err) {
         if (err) {
             res.json({error_code: 1, err_desc: err});
@@ -68,7 +68,7 @@ app.post('/upload', function(req, res) {
     });
 });
 
-app.get('/file/:filename', function(req, res){
+router.get('/file/:filename', function(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
 
     /** First check if file exists */
