@@ -85,6 +85,7 @@ var storage = GridFsStorage({
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
+        console.log(vid);
         cb(null,
             {   originalname: file.originalname,
                 videoId: vid._id
