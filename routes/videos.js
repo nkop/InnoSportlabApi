@@ -21,15 +21,6 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
 
-var testStorage = GridFsStorage({
-    gfs: gfs,
-    filename: function(req, file, cb) {
-        cb(null, vid._id);
-    }
-});
-
-var testUpload = multer({ storage: testStorage });
-
 function getVideos(req, res){
     console.log(req.params.id);
     var query = {};
@@ -61,12 +52,11 @@ function addVideo(req, res) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.json({ message: "Video successfully uploaded" })
+                res.status(201).json(video);
              })
            .fail(err => handleError(req, res, 500, err));
     });
 }
-var sUpload = testUpload.single('file');
 
 function deleteVideo(req, res){
     Video.remove({
@@ -82,17 +72,7 @@ var storage = GridFsStorage({
     chunkSize: 4096 ,
     filename: function (req, file, cb) {
         console.log('Filename');
-        //cb(null, vid._id);
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
-    },
-    /** With gridfs we can store additional meta-data along with the file */
-    metadata: function(req, file, cb) {
-        console.log('METADATA');
-        cb(null,
-            {   originalname: file.originalname,
-                //videoId: vid._id
-            });
+        cb(null, vid._id);
     },
     log: function(err, log) {
         console.log('LOG');
@@ -107,7 +87,6 @@ var storage = GridFsStorage({
 var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
-
 
 
 function getVideo(req, res){
@@ -183,24 +162,6 @@ function getCoachingVideos(req, res) {
     });
 }
 
-
-router.post('/:username', function(req, res) {
-    User.findOne({ 'userName' : req.params.username }, function (err, user) {
-        var video = new Video();
-        video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
-                upload(req, res, function(err) {
-                    if (err)
-                        handleError(req, res, 500, err);
-                });
-                res.json({ message: "Video successfully uploaded" })
-            })
-            .fail(err => handleError(req, res, 500, err));
-    });
-});
-
 /* GET videos listing. */
 router.route('/')
     .get(getVideos)
@@ -209,8 +170,8 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
-// router.route('/:username')
-//     .post(addVideo)
+ router.route('/:username')
+     .post(addVideo)
 
 router.route('/:id/video')
     .get(getVideo);
