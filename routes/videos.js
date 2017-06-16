@@ -81,6 +81,7 @@ var storage = GridFsStorage({
     gfs : gfs,
     chunkSize: 32740 ,
     filename: function (req, file, cb) {
+        console.log(file);
         cb(null, vid._id);
     },
     /** With gridfs we can store additional meta-data along with the file */
