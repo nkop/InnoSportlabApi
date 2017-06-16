@@ -93,12 +93,13 @@ var storage = GridFsStorage({
                 videoId: vid._id
             });
     },*/
+    logLevel: 'all',
     log: function(err, log) {
         console.log('LOG');
          if (err) {
              console.error(err);
          } else {
-             console.log(log.message);
+             console.log(log.message, log.extra);
          }
     }
 });
