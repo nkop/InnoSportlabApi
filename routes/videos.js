@@ -51,20 +51,20 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
-    User.findOne({ 'userName' : req.params.username }, function (err, user) {
-        var video = new Video();
-        video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
+    // User.findOne({ 'userName' : req.params.username }, function (err, user) {
+    //     var video = new Video();
+    //     video.sporter = user;
+    //     video.save()
+    //         .then(video => {
+    //             vid = video;
                 upload(req, res, function(err) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.json({ message: "Video successfully uploaded" });
-             })
-            .fail(err => handleError(req, res, 500, err));
-    });
+                res.json({ message: "Video successfully uploaded" })
+             // })
+           // .fail(err => handleError(req, res, 500, err));
+    // });
 }
 var sUpload = testUpload.single('file');
 
@@ -78,23 +78,25 @@ function deleteVideo(req, res){
 }
 
 var storage = GridFsStorage({
-    url: "mongodb://admin:admin@innosportlab-shard-00-00-0tqf6.mongodb.net:27017,innosportlab-shard-00-01-0tqf6.mongodb.net:27017,innosportlab-shard-00-02-0tqf6.mongodb.net:27017/InnoSportlab?ssl=true&replicaSet=InnoSportlab-shard-0&authSource=admin",
+    gfs: gfs,
     chunkSize: 4096 ,
-    root: 'ctFiles', //root name for collection to store files into
-    /*filename: function (req, file, cb) {
+    filename: function (req, file, cb) {
         console.log('Filename');
-        cb(null, vid._id);
+        //cb(null, vid._id);
+        var datetimestamp = Date.now();
+        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
     },
-    /** With gridfs we can store additional meta-data along with the file *
+    /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
         console.log('METADATA');
         cb(null,
             {   originalname: file.originalname,
-                videoId: vid._id
+                //videoId: vid._id
             });
-    },*/
-    logLevel: 'all',
-    log: function(err, log) {
+    },
+    root: 'ctFiles', //root name for collection to store files into
+    log:
+        function(err, log) {
         console.log('LOG');
          if (err) {
              console.error(err);
