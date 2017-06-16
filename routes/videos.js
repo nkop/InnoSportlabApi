@@ -191,8 +191,8 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
-// router.route('/:username')
-//     .post(addVideo)
+router.route('/:username')
+    .post(addVideo)
 
 router.route('/:id/video')
     .get(getVideo);
