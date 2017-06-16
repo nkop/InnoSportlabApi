@@ -52,7 +52,7 @@ function addVideo(req, res) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.json(video);
+                res.json({ 'message': "Video opgeslagen"});
              })
            .fail(err => handleError(req, res, 500, err));
     });
