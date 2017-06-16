@@ -80,6 +80,7 @@ let users = require('./routes/users');
 let messages = require('./routes/messages');
 let tags = require('./routes/tags');
 let videos = require('./routes/videos');
+let binary = require('./routes/binary');
 
 
 app.use('/', index);
@@ -87,7 +88,7 @@ app.use('/users', users(handleError));
 app.use('/tags', tags(handleError));
 app.use('/videos', videos(handleError));
 app.use('/messages', messages(handleError));
-
+app.use('/binary', binary(handleError));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
