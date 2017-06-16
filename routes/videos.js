@@ -80,18 +80,17 @@ function deleteVideo(req, res){
 var storage = GridFsStorage({
     gfs : gfs,
     chunkSize: 4096 ,
+    root: 'ctFiles', //root name for collection to store files into
     filename: function (req, file, cb) {
         cb(null, vid._id);
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
-        console.log(vid);
         cb(null,
             {   originalname: file.originalname,
                 videoId: vid._id
             });
     },
-    root: 'ctFiles', //root name for collection to store files into
     log: function(err, log) {
         if (err) {
             console.error(err);
