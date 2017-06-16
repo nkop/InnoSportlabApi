@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 /** Setting up storage using multer-gridfs-storage */
 var storage = GridFsStorage({
     gfs : gfs,
-    chunkSize: 16320,
+    chunkSize: 1024,
     filename: function (req, file, cb) {
         var datetimestamp = Date.now();
         cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
