@@ -9,10 +9,8 @@ var multer = require('multer');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
 var handleError;
-var bodyParser = require('body-parser');
 
 var mongoose = require('mongoose');
-
 Video = mongoose.model('Video');
 Tag = mongoose.model('Tag');
 User = mongoose.model('User');
@@ -23,16 +21,14 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
 
+var testStorage = GridFsStorage({
+    gfs: gfs,
+    filename: function(req, file, cb) {
+        cb(null, vid._id);
+    }
+});
 
-// router.use(function(req, res, next) { //allow cross origin requests
-//     res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     res.header("Access-Control-Allow-Credentials", true);
-//     next();
-// });
-//
-// router.use(bodyParser.json());
+var testUpload = multer({ storage: testStorage });
 
 function getVideos(req, res){
     console.log(req.params.id);
