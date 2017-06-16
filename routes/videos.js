@@ -61,7 +61,7 @@ function addVideo(req, res) {
                     if (err)
                         handleError(req, res, 500, err);
                 });
-                res.status(201).json(video);
+                res.json({ message: "Video successfully uploaded" });
              })
             .fail(err => handleError(req, res, 500, err));
     });
@@ -81,12 +81,10 @@ var storage = GridFsStorage({
     gfs : gfs,
     chunkSize: 32740 ,
     filename: function (req, file, cb) {
-        console.log(file);
         cb(null, vid._id);
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
-        console.log(vid);
         cb(null,
             {   originalname: file.originalname,
                 videoId: vid._id
