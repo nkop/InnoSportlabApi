@@ -183,24 +183,6 @@ function getCoachingVideos(req, res) {
     });
 }
 
-
-router.post('/:username', function(req, res) {
-    User.findOne({ 'userName' : req.params.username }, function (err, user) {
-        var video = new Video();
-        video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
-                upload(req, res, function(err) {
-                    if (err)
-                        handleError(req, res, 500, err);
-                });
-                res.json({ message: "Video successfully uploaded" })
-            })
-            .fail(err => handleError(req, res, 500, err));
-    });
-});
-
 /* GET videos listing. */
 router.route('/')
     .get(getVideos)
