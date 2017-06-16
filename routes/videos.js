@@ -82,16 +82,19 @@ var storage = GridFsStorage({
     chunkSize: 4096 ,
     root: 'ctFiles', //root name for collection to store files into
     filename: function (req, file, cb) {
+        console.log('Filename');
         cb(null, vid._id);
     },
     /** With gridfs we can store additional meta-data along with the file */
     metadata: function(req, file, cb) {
+        console.log('METADATA');
         cb(null,
             {   originalname: file.originalname,
                 videoId: vid._id
             });
     },
     log: function(err, log) {
+        console.log('LOG');
          if (err) {
              console.error(err);
          } else {
