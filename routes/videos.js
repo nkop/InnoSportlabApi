@@ -90,16 +90,14 @@ var storage = GridFsStorage({
             {   originalname: file.originalname,
                 videoId: vid._id
             });
+        console.log(file);
     },
     log: function(err, log) {
-        console.log(log.message + " ghello ");
-        console.log(log.extra + " ghello2 ");
-        console.log(err + " ghello3 ");
-        // if (err) {
-        //     console.error(err);
-        // } else {
-        //     console.log(log.message, log.extra);
-        // }
+         if (err) {
+             console.error(err);
+         } else {
+             console.log(log.message);
+         }
     }
 });
 
