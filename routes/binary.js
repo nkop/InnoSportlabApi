@@ -66,16 +66,16 @@ router.post('/:username/upload', function(req, res) {
     User.findOne({'userName': req.params.username}, function (err, user) {
         var video = new Video();
         video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
+        video.save();
+            // .then(video => {
+            //     vid = video;
                 upload(req, res, function (err) {
                     if (err) {
                         res.json({error_code: 1, err_desc: err});
                     }
                 });
                 res.json({message: "Video successfully uploaded"})
-            }).fail(err => handleError(req, res, 500, err));
+            // }).fail(err => handleError(req, res, 500, err));
     });
 });
 
