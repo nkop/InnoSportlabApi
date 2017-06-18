@@ -21,15 +21,6 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
 
-var testStorage = GridFsStorage({
-    gfs: gfs,
-    filename: function(req, file, cb) {
-        cb(null, vid._id);
-    }
-});
-
-var testUpload = multer({ storage: testStorage });
-
 function getVideos(req, res){
     console.log(req.params.id);
     var query = {};
@@ -66,7 +57,6 @@ function addVideo(req, res) {
         });
     });
 }
-var sUpload = testUpload.single('file');
 
 function deleteVideo(req, res){
     Video.remove({
@@ -80,6 +70,7 @@ function deleteVideo(req, res){
 var storage = GridFsStorage({
     gfs: gfs,
     chunkSize: 4096 ,
+    root: 'ctFiles',
     filename: function (req, file, cb) {
         cb(null, vid._id);
     },
@@ -90,13 +81,12 @@ var storage = GridFsStorage({
              console.log(log.message, log.extra);
          }
     }
+
 });
 
 var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
-
-
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
