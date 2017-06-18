@@ -45,16 +45,16 @@ function addVideo(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
-                upload(req, res, function(err) {
-                    //if (err)
-                        //handleError(req, res, 500, err);
-                    res.json({ 'message': "Video opgeslagen"});
-                });
-             })
-           .fail(err => handleError(req, res, 500, err));
+        video.save(function(err){
+            vid = video;
+            if (err) return handleError(err);
+            upload(req, res, function (err) {
+                if (err) {
+                    res.json({message: "Error uploading video", err_desc: err});
+                }
+                res.json({message: "Video successfully uploaded"})
+            });
+        });
     });
 }
 
@@ -70,12 +70,11 @@ function deleteVideo(req, res){
 var storage = GridFsStorage({
     gfs: gfs,
     chunkSize: 4096 ,
+    root: 'ctFiles',
     filename: function (req, file, cb) {
-        console.log(vid._id);
         cb(null, vid._id);
     },
     log: function(err, log) {
-        console.log('LOG');
          if (err) {
              console.error(err);
          } else {
@@ -170,7 +169,7 @@ router.route('/:id')
     .get(getVideos)
     .delete(deleteVideo);
 
- router.route('/:username')
+router.route('/:username')
      .post(addVideo)
 
 router.route('/:id/video')
