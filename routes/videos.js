@@ -17,18 +17,15 @@ var gfs = Grid(conn.db);
 var vid;
 
 function getVideos(req, res){
-    console.log(req.params.id);
     var query = {};
     if (req.params.id) {
         query._id = req.params.id;
     }
-    console.log(query);
 
     Video.find(query)
         .populate('tags')
         .populate('sporter')
         .then(data => {
-            console.log(data);
             if (req.params.id) {
                 data = data[0];
             }
@@ -47,7 +44,7 @@ function addVideo(req, res) {
                 if (err) {
                     res.json({message: "Error uploading video", err_desc: err});
                 }
-                res.json({message: "Video successfully uploaded"})
+                res.json(vid);
             });
         });
     });

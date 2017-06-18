@@ -29,8 +29,6 @@ function patchRFID(req, res) {
         }
 
         user.rfid = req.body.rfid;
-        user.updated_at = Date.now();
-
         user.save(function (err) {
             if (err) {
                 handleError(req, res, 500, err);
@@ -43,7 +41,7 @@ function patchRFID(req, res) {
 function deleteUser(req, res) {
     User.remove({
         userName: req.params.userName
-    }, function (err, user) {
+    }, function (err) {
         if (err) {
             handleError(req, res, 500, err);
         }
@@ -58,8 +56,7 @@ function updateUser(req, res) {
         user.email = req.body.email;
         user.city = req.body.city;
         user.rfid = req.body.rfid;
-        user
-            .save()
+        user.save()
             .then(user => {
                 res.status(200).json(user)
             }).catch(err => handleError(req, res, 500, err));
@@ -72,8 +69,7 @@ function validateLogin(req, res) {
             console.log("error");
 
         if (!user || !user.validPassword(req.body.password)) {
-            res
-                .status(500)
+            res.status(500)
                 .json({
                     "message": "Invalid email or password"
                 });
@@ -86,8 +82,7 @@ function validateLogin(req, res) {
 function addUser(req, res) {
     var user = new User(req.body);
     user.password = user.generateHash(req.body.password);
-    user
-        .save()
+    user.save()
         .then(user => {
             res.status(201).json(user);
         })
@@ -100,9 +95,8 @@ function validateSignUp(req, res) {
 
   if (req.body.password === req.body.confirmpassword && countPasswordChar > 5) {
     User.findOne({'userName': req.body.userName}, function (err, user) {
-        console.log(user);
         if (err)
-            console.log("error");
+            handleError(req, res, 500, err);
 
         if(user === null){
           User.findOne({'email': req.body.email}, function (err, user) {
