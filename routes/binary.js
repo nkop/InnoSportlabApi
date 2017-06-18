@@ -9,6 +9,8 @@ var Grid = require('gridfs-stream');
 Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 
+var vid;
+
 Video = mongoose.model('Video');
 Tag = mongoose.model('Tag');
 User = mongoose.model('User');
@@ -34,10 +36,10 @@ var storage = GridFsStorage({
     },
     /** With gridfs we can store aditional meta-data along with the file */
     metadata: function(req, file, cb) {
+        console.log(vid);
         cb(null, { originalname: file.originalname });
     },
     log: function(err, log) {
-        console.log('LOG');
         if (err) {
             console.error(err);
         } else {
@@ -66,12 +68,15 @@ router.post('/:username/upload', function(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
-        video.save();
-        upload(req, res, function (err) {
-            if (err) {
-                res.json({error_code: 1, err_desc: err});
-            }
-            res.json({message: "Video successfully uploaded"})
+        video.save(function(err){
+            vid = video;
+            if (err) return handleError(err);
+            upload(req, res, function (err) {
+                if (err) {
+                    res.json({error_code: 1, err_desc: err});
+                }
+                res.json({message: "Video successfully uploaded"})
+            });
         });
     });
 });
