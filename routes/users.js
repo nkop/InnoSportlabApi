@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express();
-var _ = require('underscore');
 var handleError;
 var async = require('async');
 
@@ -41,14 +40,6 @@ function patchRFID(req, res) {
     });
 }
 
-function patchVideo(req, res) {
-    User.findOne({'userName': req.params.userName}, 'username', function (err, user) {
-        if (err) {
-            handleError(req, res, 500, err);
-        }
-    })
-}
-
 function deleteUser(req, res) {
     User.remove({
         userName: req.params.userName
@@ -62,7 +53,6 @@ function deleteUser(req, res) {
 
 function updateUser(req, res) {
     User.findById(req.params.userName, function (err, user) {
-        // user.userName = req.body.userName; // todo check if already exists
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
         user.email = req.body.email;
@@ -76,11 +66,6 @@ function updateUser(req, res) {
     });
 }
 
-/**
- * Check if user/email exists and if password matches
- * @param req
- * @param res
- */
 function validateLogin(req, res) {
     User.findOne({'email': req.body.email}, function (err, user) {
         if (err)
@@ -114,7 +99,7 @@ function validateSignUp(req, res) {
   var countPasswordChar = Object.keys(req.body.password).length;
 
   if (req.body.password === req.body.confirmpassword && countPasswordChar > 5) {
-    User.findOne({'userName': req.body.userName}, function (err, user) { // deze user moet niet null zijn nu
+    User.findOne({'userName': req.body.userName}, function (err, user) {
         console.log(user);
         if (err)
             console.log("error");
@@ -154,10 +139,9 @@ function getVideos(req, res)
     }).fail(err => handleError(req, res, 500, err));
 }
 
-
-/* GET users listing. */
 router.route('/')
     .get(getUsers);
+
 router.route('/:userName')
     .get(getUsers)
     .put(updateUser)
@@ -165,9 +149,6 @@ router.route('/:userName')
 
 router.route('/:userName/rfid')
     .patch(patchRFID);
-
-router.route('/:userName/video')
-    .patch(patchVideo);
 
 router.route('/:id/videos')
     .get(getVideos);  
@@ -177,9 +158,6 @@ router.route('/validate')
 
 router.route('/validatesignup')
     .post(validateSignUp);
-
-
-
 
 module.exports = function (errCallback) {
     console.log('Initializing users routing module');

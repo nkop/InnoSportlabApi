@@ -1,10 +1,5 @@
-/**
- * Created by Niels on 2-3-2017.
- */
-
 var express = require('express');
 var router = express();
-var _ = require('underscore');
 var multer = require('multer');
 var Grid = require('gridfs-stream');
 var GridFsStorage = require('multer-gridfs-storage');
@@ -81,12 +76,12 @@ var storage = GridFsStorage({
              console.log(log.message, log.extra);
          }
     }
-
 });
 
-var upload = multer({ //multer settings for single upload
+var upload = multer({
     storage: storage
 }).single('file');
+
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
@@ -99,14 +94,11 @@ function getVideo(req, res){
                         responseMessage: "error"
                     });
                 }
-                /** create read stream */
                 var readstream = gfs.createReadStream({
                     filename: files[0].filename,
                     root: "ctFiles"
                 });
-                /** set the proper content type */
                 res.set('Content-Type', files[0].contentType)
-                /** return response */
                 return readstream.pipe(res);
             });
         }
@@ -161,7 +153,6 @@ function getCoachingVideos(req, res) {
     });
 }
 
-/* GET videos listing. */
 router.route('/')
     .get(getVideos)
 
@@ -170,7 +161,7 @@ router.route('/:id')
     .delete(deleteVideo);
 
 router.route('/:username')
-    .post(addVideo)
+     .post(addVideo);
 
 router.route('/:id/video')
     .get(getVideo);
@@ -191,4 +182,4 @@ module.exports = function (errCallback){
     console.log('Initializing video routing module');
     handleError = errCallback;
     return router;
-}
+};

@@ -13,5 +13,4 @@ var messageSchema = new mongoose.Schema({
     updated_at: {type: Date, required: true, default: Date.now}
 });
 
-
 mongoose.model('Message', messageSchema);

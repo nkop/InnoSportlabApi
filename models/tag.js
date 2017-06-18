@@ -1,7 +1,3 @@
-/**
- * Created by Niels Kop on 08-Mar-17.
- */
-
 var mongoose = require('mongoose');
 
 var tagSchema = new mongoose.Schema({
