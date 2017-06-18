@@ -1,7 +1,3 @@
-/**
- * Created by Niels on 2-3-2017.
- */
-
 var mongoose = require('mongoose');
 var Tag = mongoose.model('Tag');
 var User = mongoose.model('User');

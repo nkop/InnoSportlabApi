@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express();
-var _ = require('underscore');
 var handleError;
 var async = require('async');
 
@@ -27,8 +26,7 @@ function addTag(req, res){
     var tag = new Tag(req.body);
     tag.created_at = Date.now();
     tag.updated_at = Date.now();
-    tag
-        .save()
+    tag.save()
         .then(tag => {
             addTagTovideo(req, res, tag);
         })
@@ -50,26 +48,15 @@ function addTagTovideo(req, res, tag) {
         )
 }
 
-function patchTag(req, res){
-    var tag;
-    Tag.findOne({ 'tag' : req.body.tag }, 'tag', function (err, tagje) {
-        tag = new Tag(tagje);
-        console.log(tag);
-        console.log(tagje);
-    });
-}
-
 function deleteTag(req, res){
     Tag.remove({
         tag: req.params.id
-    }, function(err, tagje){
+    }, function(err){
         if (err) {handleError(req, res, 500, err); }
         res.json({ message: "Tag successfully deleted" });
-    });rs
-
+    });
 }
 
-/* GET coachs listing. */
 router.route('/')
     .get(getTags)
     .post(addTag);
@@ -82,4 +69,4 @@ module.exports = function (errCallback){
     console.log('Initializing tags routing module');
     handleError = errCallback;
     return router;
-}
+};

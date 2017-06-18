@@ -1,9 +1,4 @@
-/**
- * Created by Niels on 2-3-2017.
- */
-
 var mongoose = require('mongoose');
-
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var bcrypt = require('bcrypt-nodejs');
