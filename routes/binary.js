@@ -67,8 +67,9 @@ router.post('/:username/upload', function(req, res) {
                     if (err) {
                         res.json({error_code: 1, err_desc: err});
                     }
+                    res.json({message: "Video successfully uploaded"})
                 });
-                res.json({message: "Video successfully uploaded"})
+
 });
 
 router.get('/file/:filename', function(req, res){
