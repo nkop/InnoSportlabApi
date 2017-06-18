@@ -31,8 +31,7 @@ var storage = GridFsStorage({
     gfs : gfs,
     chunkSize: 16320,
     filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
+        cb(null, vid._id);
     },
     /** With gridfs we can store aditional meta-data along with the file */
     metadata: function(req, file, cb) {
