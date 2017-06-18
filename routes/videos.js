@@ -21,15 +21,6 @@ Grid.mongo = mongoose.mongo;
 var gfs = Grid(conn.db);
 var vid;
 
-var testStorage = GridFsStorage({
-    gfs: gfs,
-    filename: function(req, file, cb) {
-        cb(null, vid._id);
-    }
-});
-
-var testUpload = multer({ storage: testStorage });
-
 function getVideos(req, res){
     console.log(req.params.id);
     var query = {};
@@ -54,19 +45,18 @@ function addVideo(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
-        video.save()
-            .then(video => {
-                vid = video;
-                upload(req, res, function(err) {
-                    if (err)
-                        handleError(req, res, 500, err);
-                });
-                res.json({ message: "Video successfully uploaded" })
-             })
-           .fail(err => handleError(req, res, 500, err));
+        video.save(function(err){
+            vid = video;
+            if (err) return handleError(err);
+            upload(req, res, function (err) {
+                if (err) {
+                    res.json({message: "Error uploading video", err_desc: err});
+                }
+                res.json({message: "Video successfully uploaded"})
+            });
+        });
     });
 }
-var sUpload = testUpload.single('file');
 
 function deleteVideo(req, res){
     Video.remove({
@@ -80,35 +70,23 @@ function deleteVideo(req, res){
 var storage = GridFsStorage({
     gfs: gfs,
     chunkSize: 4096 ,
+    root: 'ctFiles',
     filename: function (req, file, cb) {
-        console.log('Filename');
-        //cb(null, vid._id);
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1]);
-    },
-    /** With gridfs we can store additional meta-data along with the file */
-    metadata: function(req, file, cb) {
-        console.log('METADATA');
-        cb(null,
-            {   originalname: file.originalname,
-                //videoId: vid._id
-            });
+        cb(null, vid._id);
     },
     log: function(err, log) {
-        console.log('LOG');
          if (err) {
              console.error(err);
          } else {
              console.log(log.message, log.extra);
          }
     }
+
 });
 
 var upload = multer({ //multer settings for single upload
     storage: storage
 }).single('file');
-
-
 
 function getVideo(req, res){
     gfs.collection('ctFiles'); //set collection name to lookup into
