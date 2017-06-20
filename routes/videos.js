@@ -24,6 +24,7 @@ function getVideos(req, res){
 
     Video.find(query)
         .populate('tags')
+        .populate('comments')
         .populate('sporter')
         .then(data => {
             if (req.params.id) {
@@ -136,6 +137,7 @@ function getFavoriteVideos(req, res) {
             res.json(data);
         })
         .populate('tags')
+        .populate('comments')
         .populate('sporter');
     });
 }
@@ -146,6 +148,7 @@ function getCoachingVideos(req, res) {
             res.json(data);
         })
         .populate('tags')
+        .populate('comments')
         .populate('sporter');
     });
 }
