@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express();
-var _ = require('underscore');
 var handleError;
 var async = require('async');
 
@@ -25,10 +24,7 @@ function getSingleMessage(req, res) {
         }).catch(err => handleError(req, res, 500, err));
 }
 
-// add's an invite to a coach
-function inviteCoach(req, res, next) {
-
-    // check if user don't try to send himself an invite
+function inviteCoach(req, res) {
     if (req.body.invited === req.body.invitor) {
         res.status(500).json({"error": "Can't invite yourself.."});
         return;
@@ -48,15 +44,13 @@ function inviteCoach(req, res, next) {
                 return
             }
 
-            let message = new Message();// create a new invite
-            message.invitor = invitor; // set invitor (the user)
+            let message = new Message();
+            message.invitor = invitor;
             message.message = "You have received an invitation from.";
             message.type = req.body.type;
-            message.save().catch(err => handleError(req, res, 500, err));  // save the invite
-            // add the invite to the coaches invites
+            message.save().catch(err => handleError(req, res, 500, err));
             invited.messages.push(message);
 
-            // and save..
             invited.save().then(user => {
                 res.status(201).json(user.messages)
             }).catch(err => handleError(req, res, 500, err));
@@ -64,10 +58,8 @@ function inviteCoach(req, res, next) {
     });
 }
 
-function acceptInvite(req, res, next) {
-
+function acceptInvite(req, res) {
     Message.findOne({_id: req.body.id}, function (err, message) {
-
         User.findOne({_id: req.body.userId}, function (err, user) {
             if (!user) {
                 res.status(500).json({"error": "User can't be found"});
@@ -88,7 +80,7 @@ function acceptInvite(req, res, next) {
     });
 }
 
-function declineInvite(req, res, next) {
+function declineInvite(req, res) {
     Message.findOne({_id: req.body.id}, function (err, message) {
         message.read = true;
         message.accepted = false;
