@@ -66,6 +66,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //models
 require('./models/tag');
+require('./models/comment');
 require('./models/user');
 require('./models/video');
 require('./models/message');
@@ -75,12 +76,14 @@ let index = require('./routes/index');
 let users = require('./routes/users');
 let messages = require('./routes/messages');
 let tags = require('./routes/tags');
+let comments = require('./routes/comments');
 let videos = require('./routes/videos');
 
 
 app.use('/', index);
 app.use('/users', users(handleError));
 app.use('/tags', tags(handleError));
+app.use('/comments', comments(handleError));
 app.use('/videos', videos(handleError));
 app.use('/messages', messages(handleError));
 
