@@ -10,6 +10,8 @@ Video = mongoose.model('Video');
 function getUsers(req, res) {
     var query = {};
 
+    console.log(req.params.id);
+
     if (req.params.id) {
         query._id = req.params.id;
     }
@@ -134,6 +136,9 @@ function getVideos(req, res)
 }
 
 router.route('/')
+    .get(getUsers);
+
+router.route('/:id')
     .get(getUsers);
 
 router.route('/:userName')
