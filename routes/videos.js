@@ -79,7 +79,7 @@ var storage = GridFsStorage({
 
 var upload = multer({
     storage: storage
-}).single('video');
+}).single('file');
 
 
 function getVideo(req, res){
