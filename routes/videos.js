@@ -38,12 +38,10 @@ function addVideo(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
-        console.log("File 1: " + req.body.file);
         video.save(function(err){
             vid = video;
             if (err) return handleError(err);
             upload(req, res, function (err) {
-                console.log("File 2: " + req.body.file);
                 if (err) {
                     res.json({message: "Error uploading video", err_desc: err});
                 }
