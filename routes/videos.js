@@ -35,7 +35,10 @@ function getVideos(req, res){
 }
 
 function addVideo(req, res) {
+    console.log('req.body');
     console.log(req.body);
+    console.log('req');
+    console.log(req);
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
