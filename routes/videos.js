@@ -67,6 +67,7 @@ var storage = GridFsStorage({
         cb(null, vid._id);
     },
     log: function(err, log) {
+        console.log('storage');
          if (err) {
              console.error(err);
          } else {
