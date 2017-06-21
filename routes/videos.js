@@ -38,13 +38,12 @@ function addVideo(req, res) {
     User.findOne({ 'userName' : req.params.username }, function (err, user) {
         var video = new Video();
         video.sporter = user;
+        console.log("File 1: " + req.body.file);
         video.save(function(err){
-            console.log("Dit werkt ook nog");
             vid = video;
             if (err) return handleError(err);
             upload(req, res, function (err) {
-                console.log("Hier komt hij in");
-                console.log("Ghello:" + vid);
+                console.log("File 2: " + req.body.file);
                 if (err) {
                     res.json({message: "Error uploading video", err_desc: err});
                 }
@@ -67,7 +66,6 @@ var storage = GridFsStorage({
     gfs: gfs,
     root: 'ctFiles',
     filename: function (req, file, cb) {
-        console.log("Dit is de file: " + file);
         cb(null, vid._id);
     },
     log: function(err, log) {
