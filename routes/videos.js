@@ -45,7 +45,7 @@ function addVideo(req, res) {
                 if (err) {
                     res.json({message: "Error uploading video", err_desc: err});
                 }
-                res.json(vid);
+                //res.json(vid);
             });
         });
     });
