@@ -64,6 +64,7 @@ var storage = GridFsStorage({
     gfs: gfs,
     root: 'ctFiles',
     filename: function (req, file, cb) {
+        console.log(file);
         cb(null, vid._id);
     },
     log: function(err, log) {
